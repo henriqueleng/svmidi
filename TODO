@@ -1,0 +1,11 @@
+[ ] alsa, via alsa.c alsa.h
+[✔] draw black keys fix
+[✔] manage key drawing in different events, maybe a function to draw keys
+[✔] discard multiple keypresses on ui.c
+[ ] '+' to change octave
+[ ] command line options like default octave
+[ ] sustain notes correctly
+[ ] scroll wheel bender?
+[✔] fix color usage, alloc every time uses
+    ^- current workaround, aloc all colors in differents
+        types. Maybe change that in the future. See svkbb.
