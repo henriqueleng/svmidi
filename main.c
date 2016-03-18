@@ -51,7 +51,8 @@ static Display *dpy;
 static Window win;
 GC gc;
 Colormap colormap;
-unsigned long xkeycolor, xkeypressedcolor, xsharpkeycolor, xsharpkeypressedcolor, xkeybordercolor, xfontcolor;
+unsigned long xkeycolor, xkeypressedcolor, xsharpkeycolor, 
+xsharpkeypressedcolor, xkeybordercolor, xfontcolor, xbgcolor;
 XFontStruct* font_info;
 XWindowAttributes wa;
 
@@ -131,6 +132,7 @@ startwin(unsigned int initial_width, unsigned int initial_height)
 	xsharpkeypressedcolor = getcolor(sharpkeypressedcolor);
 	xkeybordercolor = getcolor(keybordercolor);
 	xfontcolor = getcolor(fontcolor);
+	xbgcolor = getcolor(bgcolor);
 
 	/* try to load the given font. */
 	font_info = XLoadQueryFont(dpy, font);
@@ -165,20 +167,24 @@ startwin(unsigned int initial_width, unsigned int initial_height)
 	/* fuck autorepeat */
 	XAutoRepeatOn(dpy);
 	XkbSetDetectableAutoRepeat(dpy, True, NULL);
+
+	/* get initial window size */
+	XGetWindowAttributes(dpy, win, &wa);
+    winwidth = wa.width;
+    winheight = wa.height;
 }
 
 void
 drawkeyboard(/* winheight */)
 {
-	char string[30];
+	char string[25];
 	sprintf(&string, "octave: %i", octave);
 
-	XSetForeground(dpy, gc, xkeycolor);
 	/* 
 	 * TODO: is there really a need to fill a rectangle bellow text?
 	 */
-	XFillRectangle(dpy, buf, gc, 0, 0, winwidth, fontheight);
-//	XFillRectangle(dpy, buf, gc, 0, 0, winwidth, winheight);
+	XSetForeground(dpy, gc, xbgcolor);
+	XFillRectangle(dpy, buf, gc, 0, 0, winwidth, winheight);
 
 	XSetForeground(dpy, gc, xfontcolor);
 	XDrawString(dpy, buf, gc, 0, fontheight - 2, string, strlen(string));
@@ -186,7 +192,7 @@ drawkeyboard(/* winheight */)
 	unsigned int usedspace = 0, totalkeys = 0;
 	unsigned int i = 0;
 
-	keyheight = winheight - 100;
+	keyheight = winheight - 10;
 	unsigned int nwhitekeys = (int)LENGTH(whitekeys);
 	unsigned int nblackkeys = (int)LENGTH(blackkeys);
 
@@ -221,7 +227,7 @@ drawkeyboard(/* winheight */)
 		if (alternate == 1 && subskeys == 2) {
 			usedspace += keywidth;
 			subskeys = 0;
-			alternate = 2;
+			alternate = 0;
 		} else if (subskeys == 3) {
 			usedspace += keywidth;
 			subskeys = 0;
@@ -248,6 +254,49 @@ drawkeyboard(/* winheight */)
 }
 
 void
+cleanwindow(void) /* winheight, winwidth */
+{
+	/* just fill a rectangle with the size of the window */
+	XSetForeground(dpy, gc, xbgcolor);
+	XFillRectangle(dpy, buf, gc, 0, 0, winwidth, winheight);	
+}
+
+void
+drawinstruments(void)
+{
+	unsigned int spacex = 0, spacey = 0, i, subs;
+
+	unsigned int biggest = 0, tmp = 0;
+	for (i = 1; i < LENGTH(instruments); i++) {
+		if ((strlen(instruments[i].name)) > tmp) {
+			tmp = strlen(instruments[i].name);
+			biggest = i;
+		}
+	}
+
+	char tmpstring[tmp];
+	sprintf(&tmpstring, "%i: %s", biggest, instruments[biggest].name);
+	int textwidth = XTextWidth(font_info, tmpstring, strlen(tmpstring)) + 10;
+
+	for (i = 0; i < LENGTH(instruments); i++) {
+		char string[25];
+	    sprintf(&string, "%i: %s", i, instruments[i].name);
+
+		if (subs >= (winheight / fontheight) - 1) {
+			spacey = 0;
+			spacex += textwidth;
+			subs = 0;
+		} else {
+			spacey += fontheight;
+		}
+		XSetForeground(dpy, gc, xfontcolor);
+		XDrawString(dpy, buf, gc, spacex, spacey, string, strlen(string));
+		subs++;
+	}
+	XdbeSwapBuffers(dpy, &swapinfo, 1);
+}
+
+void
 run(void)
 {
     unsigned int nwhitekeys = (int)LENGTH(whitekeys);
@@ -255,30 +304,73 @@ run(void)
 	KeySym keysym;
 	XEvent e;
 	unsigned int lastpress;
-	unsigned int i;
-	int ha;
 
 	while (1) {
 		XNextEvent(dpy, &e);
 		switch (e.type) {
 
-		char string;
-		int len;
-
 		case KeyPress:
-			if (lastpress != e.xkey.keycode || lastpress == 0) {
-				/*
-				 * Handle keyboard inside this field.
-				 */
+			if (e.xkey.keycode == lastpress) {
+				break;
+			}
 				keysym = XLookupKeysym (&e.xkey, 0);
-				//printf("p: %i\n", (int)keysym);
 
+				/* enter instrument select loop if Ctrl + i*/
 				if (keysym == XK_i && e.xkey.state & ControlMask) {
-					return 0;
+					cleanwindow();
+					drawinstruments();
+
+					/* vars */
+					XEvent e2;
+					KeySym tmpkeysym;
+					char string[4];
+
+					unsigned int i = 0;
+					while (i < 5 || tmpkeysym != XK_Return) {
+						/* listen number */
+
+						char input[25];
+						XNextEvent(dpy, &e2);
+
+						switch (e2.type) {
+
+						case KeyPress:
+							XLookupString(&e2.xkey, input, 25, &tmpkeysym, NULL);
+							printf("got: %c\n", input[0]);
+							string[i] = input[0];
+							XSetForeground(dpy, gc, xfontcolor);
+							XDrawString(dpy, buf, gc, 0, winheight - fontheight, string, i);
+							XdbeSwapBuffers(dpy, &swapinfo, 1);
+							i++;
+							break;
+
+						case ConfigureNotify:
+							winheight = e2.xconfigure.height;
+							winwidth = e2.xconfigure.width;
+							cleanwindow();
+							drawinstruments();
+							break;
+						}
+					}
+					int instrument;
+					instrument = atoi(string);
+					printf("instrument: %i\n", instrument);
+					changeinstrument(1, instrument);
+					break;
+				}
+
+				if (keysym == XK_k && e.xkey.state & ControlMask) {
+					octave++;
+					break;
+				}
+
+				if (keysym == XK_j && e.xkey.state & ControlMask) {
+					octave--;
+					break;
 				}
 
 				/* match key xkeypressedcolor with a member of whitekeys[] or blackkeys[] */
-				i = 0;
+				unsigned int i = 0;
 				for (i = 0; i < nwhitekeys; i++) {
 					if (whitekeys[i].keysym == keysym) {
 						sendnote(NOTE_ON, whitekeys[i].note, 1, 100);
@@ -286,29 +378,26 @@ run(void)
 						break;
 					}
 				}
-	
+
 				for (i = 0; i < nblackkeys; i++) {
 					if (blackkeys[i].keysym == keysym) {
 						sendnote(NOTE_ON, blackkeys[i].note, 1, 100);
-						//printf("Sent note: %i\n", blackkeys[i].note);
 						blackkeys[i].status = PRESSED;
 						break;
 					}
 				}
-	
+
 				drawkeyboard();
-			}
-			lastpress = e.xkey.keycode;
+				lastpress = e.xkey.keycode;
 			break;
 
 		case KeyRelease:
 			/* magic to avoid key repetition */
 			if (e.xkey.keycode == lastpress)
 				lastpress = 0;
-				keysym = XLookupKeysym (&e.xkey, 0);
-				//printf("r: %i\n", (int)keysym);
-				i = 0;
 
+				keysym = XLookupKeysym (&e.xkey, 0);
+				
                 for (i = 0; i < nwhitekeys; i++) {
                     if (whitekeys[i].keysym == keysym) {
 						sendnote(NOTE_OFF, whitekeys[i].note, 1, 100);
@@ -328,14 +417,7 @@ run(void)
 			lastpress = 0;
 			break;
 
-
 		case ButtonPress:
-			XGetWindowAttributes(dpy, win, &wa);
-			winwidth = wa.width;
-			winheight = wa.height;
-			//printf("got a Button Press event %u\n", e.xkey.keycode);
-			octave++;
-			drawkeyboard();
 			break;
 
 		case ButtonRelease:
@@ -343,6 +425,7 @@ run(void)
 
 		case ConfigureNotify:
 			winheight = e.xconfigure.height;
+			winwidth = e.xconfigure.width;
 			drawkeyboard();
 			break;
 
@@ -391,9 +474,9 @@ main(int argc, char *argv[])
 		perror("failed to open MIDI output");
 		exit(EXIT_FAILURE);
 	}
-	changeinstrument(1, 23);
+	changeinstrument(1, 37);
 	startwin(640, 400);
-
+	
 	run();
 	quit();
 	return 0;

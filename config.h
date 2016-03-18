@@ -1,13 +1,13 @@
 int octave;
 
-//static const char font[] = "-*-terminus-medium-r-normal-*-16-*-*-*-*-*-*-*";
-static const char font[] = "*-helvetica-*-12-*"; 
+static const char font[] = "-*-terminus-medium-r-normal-*-16-*-*-*-*-*-*-*";
 static const char keycolor[] = "#ffffff";
 static const char keypressedcolor[] = "#6666ff";
 static const char sharpkeycolor[] = "#323232";
 static const char sharpkeypressedcolor[] = "#6666ff";
 static const char keybordercolor[] = "#000000";
 static const char fontcolor[] = "#000000";
+static const char bgcolor[] = "#ffffff";
 
 /*
  * Keys will be drawn in order, first all the white keys 
@@ -46,7 +46,7 @@ static Key blackkeys[] = {
 	{  XK_h,              A_SHARP,          RELEASED },
 /*	{  XK_j,              1,                RELEASED }, */
 	{  XK_k,              1,                RELEASED },
-	{  XK_l,              1,                RELEASED },
+	{  XK_l,              C_SHARP,                RELEASED },
 /*	{  XK_semicolon,      1,                RELEASED }, */
 	{  XK_1,              1,                RELEASED },
 	{  XK_2,              1,                RELEASED },
