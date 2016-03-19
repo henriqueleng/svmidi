@@ -238,11 +238,11 @@ drawkeyboard(/* winheight */)
 		if (blackkeys[totalkeys].status == PRESSED) {
 			XSetForeground(dpy, gc, xsharpkeypressedcolor);
 			XFillRectangle(dpy, buf, gc, usedspace + ((keywidth * 2) / 3), 
-				fontheight, (keywidth * 2) / 3 , keyheight / 2);
+				fontheight, (keywidth * 2) / 3 , (keyheight * 2) / 3);
 		} else if (blackkeys[totalkeys].status == RELEASED) {
     		XSetForeground(dpy, gc, xsharpkeycolor);
 			XFillRectangle(dpy, buf, gc, usedspace + ((keywidth * 2) / 3), 
-				fontheight, (keywidth * 2) / 3 , keyheight / 2); 
+				fontheight, (keywidth * 2) / 3 , (keyheight * 2 / 3)); 
 		}
 			usedspace += keywidth;
 			subskeys++;
@@ -326,7 +326,7 @@ run(void)
 					char string[4];
 
 					unsigned int i = 0;
-					while (i < 5 || tmpkeysym != XK_Return) {
+					while (i < 5) {
 						/* listen number */
 
 						char input[25];
@@ -337,10 +337,10 @@ run(void)
 						case KeyPress:
 							XLookupString(&e2.xkey, input, 25, &tmpkeysym, NULL);
 							printf("got: %c\n", input[0]);
-							string[i] = input[0];
 							XSetForeground(dpy, gc, xfontcolor);
-							XDrawString(dpy, buf, gc, 0, winheight - fontheight, string, i);
+							XDrawString(dpy, buf, gc, 10, winheight - fontheight, string, i);
 							XdbeSwapBuffers(dpy, &swapinfo, 1);
+							string[i] = input[0];
 							i++;
 							break;
 
@@ -454,11 +454,6 @@ quit(void)
 int 
 main(int argc, char *argv[])
 {
-/*
-	rootwidth = DisplayHeight(dpy, screen);
-	rootheight = DisplayWidth(dpy, screen);
-*/
-
 	ARGBEGIN {
 	case 's':
 		printf("s flag \n");
@@ -474,7 +469,6 @@ main(int argc, char *argv[])
 		perror("failed to open MIDI output");
 		exit(EXIT_FAILURE);
 	}
-	changeinstrument(1, 37);
 	startwin(640, 400);
 	
 	run();

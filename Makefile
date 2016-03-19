@@ -23,7 +23,7 @@ SOUNDFLAGS = -DSNDIO
 LIBS = ${XLIBS} ${SOUNDLIBS}
 CFLAGS = -g -std=c99 -pedantic -Wall -O0 ${XFLAGS} ${SOUNDFLAGS}
 
-BIN = virtmidi
+BIN = svmidi
 
 all: ${SOURCE} ${BIN}
 

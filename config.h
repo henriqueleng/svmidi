@@ -24,7 +24,6 @@ static Key whitekeys[] = {
     {  XK_m,              B,               RELEASED },
 	{  XK_comma,          C + 12,          RELEASED },
     {  XK_period,         D + 12,          RELEASED },
-   // {  XK_slash,        E + 12,          RELEASED },
 	{  XK_q,              E + 12,          RELEASED },
 	{  XK_w,              F + 12,          RELEASED },
 	{  XK_e,              G + 12,          RELEASED },
@@ -38,26 +37,18 @@ static Key whitekeys[] = {
 };
 
 static Key blackkeys[] = {
-	{  XK_a,              C_SHARP,          RELEASED },
-	{  XK_s,              D_SHARP,          RELEASED },
-/*	{  XK_d,              1,                RELEASED }, */
-	{  XK_f,              F_SHARP,          RELEASED },
-	{  XK_g,              G_SHARP,          RELEASED },
-	{  XK_h,              A_SHARP,          RELEASED },
-/*	{  XK_j,              1,                RELEASED }, */
-	{  XK_k,              1,                RELEASED },
-	{  XK_l,              C_SHARP,                RELEASED },
-/*	{  XK_semicolon,      1,                RELEASED }, */
-	{  XK_1,              1,                RELEASED },
-	{  XK_2,              1,                RELEASED },
-	{  XK_3,              1,                RELEASED },
-/*	{  XK_4,              1,                RELEASED }, */
-	{  XK_5,              1,                RELEASED },
-	{  XK_6,              1,                RELEASED },
-/*	{  XK_7,              1,                RELEASED }, */
-	{  XK_8,              1,                RELEASED },
-	{  XK_9,              1,                RELEASED },
-	{  XK_0,              1,                RELEASED },
+	{  XK_s,              C_SHARP,         RELEASED },
+	{  XK_d,              D_SHARP,         RELEASED },
+	{  XK_g,              F_SHARP,         RELEASED },
+	{  XK_h,              G_SHARP,         RELEASED },
+	{  XK_j,              A_SHARP,         RELEASED },
+	{  XK_l,              C_SHARP + 12,    RELEASED },
+	{  XK_1,              D_SHARP + 12,    RELEASED },
+	{  XK_3,              F_SHARP + 12,    RELEASED },
+	{  XK_4,              G_SHARP + 12,    RELEASED },
+	{  XK_5,              A_SHARP + 12,    RELEASED },
+	{  XK_7,              C_SHARP + 24,    RELEASED },
+	{  XK_8,              D_SHARP + 24,    RELEASED },
 };
 
 /* General Midi */
