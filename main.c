@@ -326,19 +326,17 @@ run(void)
 					char string[4];
 
 					unsigned int i = 0;
-					while (i < 5) {
-						/* listen number */
-
-						char input[25];
+					XSetForeground(dpy, gc, xfontcolor);
+					while (tmpkeysym != XK_Return) {
 						XNextEvent(dpy, &e2);
+						char input[25];
 
 						switch (e2.type) {
 
 						case KeyPress:
 							XLookupString(&e2.xkey, input, 25, &tmpkeysym, NULL);
 							printf("got: %c\n", input[0]);
-							XSetForeground(dpy, gc, xfontcolor);
-							XDrawString(dpy, buf, gc, 10, winheight - fontheight, string, i);
+							XDrawString(dpy, buf, gc, 0, winheight - fontheight, string, i);
 							XdbeSwapBuffers(dpy, &swapinfo, 1);
 							string[i] = input[0];
 							i++;
@@ -355,8 +353,10 @@ run(void)
 					int instrument;
 					instrument = atoi(string);
 					printf("instrument: %i\n", instrument);
-					changeinstrument(1, instrument);
-					break;
+					if (instrument > 128)
+						XDrawString(dpy, buf, gc, 0, winheight - fontheight, "number too large", 16);
+					else
+						changeinstrument(1, instrument);
 				}
 
 				if (keysym == XK_k && e.xkey.state & ControlMask) {

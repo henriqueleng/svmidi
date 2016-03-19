@@ -1,3 +1,4 @@
 [ ] alsa, via alsa.c alsa.h
 [ ] command line options like default octave
 [ ] any command line argument?
+[ ] fix intrument number input, better checks, and safer function
