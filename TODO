@@ -1,5 +1,4 @@
 [ ] alsa, via alsa.c alsa.h
-[*] NEED FIX: command line options like default octave
+[*] command line options like default octave
 [ ] fix intrument number input, better checks, and safer function
 [ ] bender
-[ ] double note bug
