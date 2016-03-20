@@ -319,7 +319,6 @@ run(void)
 
 						case KeyPress:
 							XLookupString(&e2.xkey, input, 25, &tmpkeysym, NULL);
-								printf("got: %c\n", input[0]);
 								XDrawString(dpy, buf, gc, 0, winheight - fontheight, string, i);
 								XdbeSwapBuffers(dpy, &swapinfo, 1);
 								string[i] = input[0];
@@ -340,7 +339,6 @@ run(void)
 						XDrawString(dpy, buf, gc, 0, winheight - fontheight, "ERROR: number too large", 16);
 					} else {
 						changeinstrument(instrument);
-						printf("instrument: %i\n", instrument);
 					}
 				}
 
@@ -428,7 +426,6 @@ run(void)
 			break;
 
 		default:
-			//printf("Event being thrown away\n");
 			break;
 		}
 	}
@@ -453,30 +450,21 @@ main(int argc, char *argv[])
 	int ch;
 	const char *errstr;
 
-	while ((ch = getopt(argc, argv, "cio:")) != -1) {
+	while ((ch = getopt(argc, argv, "c:i:o:")) != -1) {
 		switch (ch) {
 		case 'c':
-			channel = strtonum(optarg, 1, 16, &errstr);
-			if (errstr) {
-				fprintf(stderr, "channel is %s: %s", errstr, optarg);
-			}
+			channel = atoi(optarg);
 			break;
 		case 'i':
-			instrument = strtonum(optarg, 0, 128, &errstr);
-			if (errstr) {
-				fprintf(stderr, "instrument number is %s: %s", errstr, optarg);
-			}
+			instrument = atoi(optarg);
 			break;
 		case 'o':
-			octave = strtonum(optarg, 0, 8, &errstr);
-            if (errstr) {
-                fprintf(stderr, "octave value is %s: %s", errstr, optarg);
-            }
-
+			octave = atoi((const char)optarg);
+			break;
+		default:
 			break;
 		}
 	}
-
 	argc -= optind;
 	argv += optind;
 
@@ -485,6 +473,9 @@ main(int argc, char *argv[])
 		fprintf(stderr, "failed to open MIDI device\n");
 		exit(EXIT_FAILURE);
 	}
+
+	changeinstrument(instrument);
+
 	startwin(640, 400);
 	
 	run();
