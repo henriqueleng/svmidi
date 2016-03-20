@@ -1,3 +1,5 @@
+![svmidi screenshot](http://henriqueleng.github.io/media/svmidi.png)
+
 svmidi - simple virtual midi keyboard
 =====================================
 This is very simple virtual midi keyboard. It handle key presses and send 
