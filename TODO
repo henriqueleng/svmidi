@@ -1,4 +1,4 @@
 [ ] alsa, via alsa.c alsa.h
 [*] command line options like default octave
-[ ] fix intrument number input, better checks, and safer function
+[*] fix intrument number input, better checks, and safer function
 [ ] bender

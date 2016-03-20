@@ -24,11 +24,11 @@
 #define RELEASED 0
 
 /* variables */
-unsigned int winwidth;
-unsigned int winheight;
-const unsigned int keywidth = 50;
-unsigned int keyheight;
-unsigned int fontheight;
+uint winwidth;
+uint winheight;
+const uint keywidth = 50;
+uint keyheight;
+uint fontheight;
 
 typedef struct {
 	KeySym keysym;
@@ -41,6 +41,9 @@ typedef struct {
 	char *name;
 } Instrument;
 
+typedef unsigned int uint;
+typedef unsigned long ulong;
+
 #include "config.h"
 
 /* Xlib */
@@ -49,7 +52,7 @@ static Display *dpy;
 static Window win;
 GC gc;
 Colormap colormap;
-unsigned long xkeycolor, xkeypressedcolor, xsharpkeycolor, 
+ulong xkeycolor, xkeypressedcolor, xsharpkeycolor, 
 xsharpkeypressedcolor, xkeybordercolor, xfontcolor, xbgcolor;
 XFontStruct* font_info;
 XWindowAttributes wa;
@@ -76,7 +79,7 @@ sendnote(int action, int note, int speed)
 }
 
 /* idea from suckless:svkbd */
-unsigned long
+ulong
 getcolor(const char *colstr)
 {
 	Colormap cmap = DefaultColormap(dpy, screen);
@@ -90,7 +93,7 @@ getcolor(const char *colstr)
 }
 
 void
-startwin(unsigned int initial_width, unsigned int initial_height)
+startwin(uint initial_width, uint initial_height)
 {
 	/* open connection with the server */
 	dpy = XOpenDisplay(NULL);
@@ -128,7 +131,7 @@ startwin(unsigned int initial_width, unsigned int initial_height)
 	//printf("font height: %i\n", fontheight);
 
 	XGCValues values;
-	unsigned long valuemask = 0;
+	ulong valuemask = 0;
 	gc = XCreateGC(dpy, win, valuemask, &values);
 	XSetLineAttributes(dpy, gc, 1, LineSolid, CapRound, JoinMiter);
 	XSetFont(dpy, gc, font_info->fid);
@@ -172,12 +175,12 @@ drawkeyboard(/* winheight */)
 	XSetForeground(dpy, gc, xfontcolor);
 	XDrawString(dpy, buf, gc, 0, fontheight - 2, string, strlen(string));
 
-	unsigned int usedspace = 0, totalkeys = 0;
-	unsigned int i = 0;
+	uint usedspace = 0, totalkeys = 0;
+	uint i = 0;
 
 	keyheight = winheight - 10;
-	unsigned int nwhitekeys = (int)LENGTH(whitekeys);
-	unsigned int nblackkeys = (int)LENGTH(blackkeys);
+	uint nwhitekeys = (int)LENGTH(whitekeys);
+	uint nblackkeys = (int)LENGTH(blackkeys);
 
 	/* 
 	 * White keys must be drawn first so they stay beneath black ones. 
@@ -201,8 +204,8 @@ drawkeyboard(/* winheight */)
 	usedspace = 0;
 	totalkeys = 0;
 
-	unsigned int subskeys = 0;
-	unsigned int alternate = 1;
+	uint subskeys = 0;
+	uint alternate = 1;
 
 	/* draw black keys */
 	while (nblackkeys > 1) {
@@ -247,9 +250,9 @@ cleanwindow(void) /* winheight, winwidth */
 void
 drawinstruments(void)
 {
-	unsigned int spacex = 0, spacey = 0, i, subs;
+	uint spacex = 0, spacey = 0, i, subs;
 
-	unsigned int biggest = 0, tmp = 0;
+	uint biggest = 0, tmp = 0;
 	for (i = 1; i < LENGTH(instruments); i++) {
 		if ((strlen(instruments[i].name)) > tmp) {
 			tmp = strlen(instruments[i].name);
@@ -282,11 +285,11 @@ drawinstruments(void)
 void
 run(void)
 {
-    unsigned int nwhitekeys = (int)LENGTH(whitekeys);
-    unsigned int nblackkeys = (int)LENGTH(blackkeys);
+    uint nwhitekeys = (int)LENGTH(whitekeys);
+    uint nblackkeys = (int)LENGTH(blackkeys);
 	KeySym keysym;
 	XEvent e;
-	unsigned int lastpress;
+	uint lastpress;
 
 	while (1) {
 		XNextEvent(dpy, &e);
@@ -309,7 +312,7 @@ run(void)
 					KeySym tmpkeysym = NoSymbol;
 					char string[4];
 
-					unsigned int i = 0;
+					uint i = 0;
 					XSetForeground(dpy, gc, xfontcolor);
 					while (tmpkeysym != XK_Return) {
 						XNextEvent(dpy, &e2);
@@ -363,7 +366,7 @@ run(void)
 				}
 
 				/* match key xkeypressedcolor with a member of whitekeys[] or blackkeys[] */
-				unsigned int i = 0;
+				uint i = 0;
 				for (i = 0; i < nwhitekeys; i++) {
 					if (whitekeys[i].keysym == keysym) {
 						sendnote(NOTE_ON, whitekeys[i].note, 100);
@@ -444,22 +447,28 @@ quit(void)
 	midiclose();
 }
 
+void
+usage(void)
+{
+	fprintf(stderr, "usage: svmidi [-i instrument] [-o octave]\n");
+	exit(EXIT_FAILURE);
+}
+
 int 
 main(int argc, char *argv[])
 {
 	int ch;
-	const char *errstr;
 
-	while ((ch = getopt(argc, argv, "c:i:o:")) != -1) {
+	while ((ch = getopt(argc, argv, "i:o:h")) != -1) {
 		switch (ch) {
-		case 'c':
-			channel = atoi(optarg);
-			break;
 		case 'i':
 			instrument = atoi(optarg);
 			break;
 		case 'o':
-			octave = atoi((const char)optarg);
+			octave = atoi(optarg);
+			break;
+		case 'h':
+			usage();
 			break;
 		default:
 			break;
@@ -474,10 +483,14 @@ main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	changeinstrument(instrument);
+	channel = 1;
+	if (instrument > 127) {
+		fprintf(stderr, "intrument number too big, max. is 127\n");
+		exit(EXIT_FAILURE);
+	} else
+		changeinstrument(instrument);
 
 	startwin(640, 400);
-	
 	run();
 	quit();
 	return 0;
