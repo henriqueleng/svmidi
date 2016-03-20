@@ -1,6 +1,7 @@
 [ ] alsa, via alsa.c alsa.h
 [ ] bender
 [*] command line options like default octave
+[ ] look for code duplication 
 
 BUGS:
 [*] fix intrument number input, better checks, and safer function.
