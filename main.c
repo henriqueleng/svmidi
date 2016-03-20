@@ -1,13 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>	/* usleep */
+#include <unistd.h>	/* usleep, getopt */
 #include <X11/keysym.h>
 #include <X11/Xlib.h>
 #include <X11/XKBlib.h>	/* XkbSetDetectableAutoRepeat() */
 #include <X11/extensions/Xdbe.h> /* double buffer */
 
-#include "arg.h"
 #include "midi.h"
 #include "util.h"
 
@@ -30,7 +29,6 @@ unsigned int winheight;
 const unsigned int keywidth = 50;
 unsigned int keyheight;
 unsigned int fontheight;
-char *argv0;
 
 typedef struct {
 	KeySym keysym;
@@ -62,37 +60,22 @@ XdbeBackBufferAttributes  *bufattr;
 XdbeSwapInfo swapinfo;
 
 void
-changeinstrument(int channel, int number)
+changeinstrument(int number)
 {
 	u_char message[] = {PRG_CHANGE | channel, number};
 	midisend(message);
 }
 
 void
-sendnote(int action, int note, int channel, int speed)
+sendnote(int action, int note, int speed)
 {
-	int mult;
-	mult = octave;
-
-	if (octave == 9) {
-		switch (note) {
-			case G:
-			case G_SHARP:
-			case A:
-			case A_SHARP:
-			case B:
-				mult--;
-				break;
-		}
-	}
-
+	int mult = octave;
 	mult++;
 	u_char message[] = {action | channel, note + (OCTAVE_VALUE * mult), speed};
-
 	midisend(message);
 }
 
-/* idea from svkbd */
+/* idea from suckless:svkbd */
 unsigned long
 getcolor(const char *colstr)
 {
@@ -177,8 +160,8 @@ startwin(unsigned int initial_width, unsigned int initial_height)
 void
 drawkeyboard(/* winheight */)
 {
-	char string[25];
-	sprintf(&string, "octave: %i", octave);
+	char string[100];
+	sprintf(&string, "octave: %i   channel: %i    instrument: %i - %s", octave, channel, instrument, instruments[instrument].name);
 
 	/* 
 	 * TODO: is there really a need to fill a rectangle bellow text?
@@ -317,12 +300,13 @@ run(void)
 
 				/* enter instrument select loop if Ctrl + i*/
 				if (keysym == XK_i && e.xkey.state & ControlMask) {
+					keysym = NoSymbol;
 					cleanwindow();
 					drawinstruments();
 
 					/* vars */
 					XEvent e2;
-					KeySym tmpkeysym;
+					KeySym tmpkeysym = NoSymbol;
 					char string[4];
 
 					unsigned int i = 0;
@@ -335,11 +319,11 @@ run(void)
 
 						case KeyPress:
 							XLookupString(&e2.xkey, input, 25, &tmpkeysym, NULL);
-							printf("got: %c\n", input[0]);
-							XDrawString(dpy, buf, gc, 0, winheight - fontheight, string, i);
-							XdbeSwapBuffers(dpy, &swapinfo, 1);
-							string[i] = input[0];
-							i++;
+								printf("got: %c\n", input[0]);
+								XDrawString(dpy, buf, gc, 0, winheight - fontheight, string, i);
+								XdbeSwapBuffers(dpy, &swapinfo, 1);
+								string[i] = input[0];
+								i++;
 							break;
 
 						case ConfigureNotify:
@@ -350,22 +334,33 @@ run(void)
 							break;
 						}
 					}
-					int instrument;
 					instrument = atoi(string);
-					printf("instrument: %i\n", instrument);
-					if (instrument > 128)
-						XDrawString(dpy, buf, gc, 0, winheight - fontheight, "number too large", 16);
-					else
-						changeinstrument(1, instrument);
+					if (instrument > 128) {
+						drawkeyboard();
+						XDrawString(dpy, buf, gc, 0, winheight - fontheight, "ERROR: number too large", 16);
+					} else {
+						changeinstrument(instrument);
+						printf("instrument: %i\n", instrument);
+					}
 				}
 
-				if (keysym == XK_k && e.xkey.state & ControlMask) {
+				if (keysym == XK_k && e.xkey.state & ControlMask && octave < 9) {
 					octave++;
 					break;
 				}
 
-				if (keysym == XK_j && e.xkey.state & ControlMask) {
+				if (keysym == XK_j && e.xkey.state & ControlMask && octave > -1) {
 					octave--;
+					break;
+				}
+
+				if (keysym == XK_l && e.xkey.state & ControlMask) {
+					channel++;
+					break;
+				}
+
+				if (keysym == XK_h && e.xkey.state & ControlMask) {
+					channel--;
 					break;
 				}
 
@@ -373,7 +368,7 @@ run(void)
 				unsigned int i = 0;
 				for (i = 0; i < nwhitekeys; i++) {
 					if (whitekeys[i].keysym == keysym) {
-						sendnote(NOTE_ON, whitekeys[i].note, 1, 100);
+						sendnote(NOTE_ON, whitekeys[i].note, 100);
 						whitekeys[i].status = PRESSED;
 						break;
 					}
@@ -381,7 +376,7 @@ run(void)
 
 				for (i = 0; i < nblackkeys; i++) {
 					if (blackkeys[i].keysym == keysym) {
-						sendnote(NOTE_ON, blackkeys[i].note, 1, 100);
+						sendnote(NOTE_ON, blackkeys[i].note, 100);
 						blackkeys[i].status = PRESSED;
 						break;
 					}
@@ -400,7 +395,7 @@ run(void)
 				
                 for (i = 0; i < nwhitekeys; i++) {
                     if (whitekeys[i].keysym == keysym) {
-						sendnote(NOTE_OFF, whitekeys[i].note, 1, 100);
+						sendnote(NOTE_OFF, whitekeys[i].note, 100);
                         whitekeys[i].status = RELEASED;
                         break;
                     }
@@ -409,7 +404,7 @@ run(void)
                 for (i = 0; i < nblackkeys; i++) {
                     if (blackkeys[i].keysym == keysym) {
                         blackkeys[i].status = RELEASED;
-						sendnote(NOTE_OFF, blackkeys[i].note, 1, 100);
+						sendnote(NOTE_OFF, blackkeys[i].note, 100);
                         break;
                     }
                 }
@@ -444,6 +439,7 @@ quit(void)
 {
 	/* X11 close */
 	XdbeDeallocateBackBufferName(dpy, buf);
+	XFreeGC(dpy, gc);
 	XDestroyWindow(dpy, win);
 	XCloseDisplay(dpy);
 
@@ -454,19 +450,39 @@ quit(void)
 int 
 main(int argc, char *argv[])
 {
-	ARGBEGIN {
-	case 's':
-		printf("s flag \n");
-		return 0;
-		break;
-	} ARGEND
+	int ch;
+	const char *errstr;
 
-	octave = 1;
+	while ((ch = getopt(argc, argv, "cio:")) != -1) {
+		switch (ch) {
+		case 'c':
+			channel = strtonum(optarg, 1, 16, &errstr);
+			if (errstr) {
+				fprintf(stderr, "channel is %s: %s", errstr, optarg);
+			}
+			break;
+		case 'i':
+			instrument = strtonum(optarg, 0, 128, &errstr);
+			if (errstr) {
+				fprintf(stderr, "instrument number is %s: %s", errstr, optarg);
+			}
+			break;
+		case 'o':
+			octave = strtonum(optarg, 0, 8, &errstr);
+            if (errstr) {
+                fprintf(stderr, "octave value is %s: %s", errstr, optarg);
+            }
 
-	/* initialization */
+			break;
+		}
+	}
+
+	argc -= optind;
+	argv += optind;
+
 	/* start midi */
 	if (midiopen()) {
-		perror("failed to open MIDI output");
+		fprintf(stderr, "failed to open MIDI device\n");
 		exit(EXIT_FAILURE);
 	}
 	startwin(640, 400);

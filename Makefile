@@ -4,7 +4,7 @@
 # SOURCE
 SOURCE = main.c sndio.c
 OBJ = main.o sndio.o
-HDR = midi.h config.h arg.h
+HDR = midi.h config.h
 
 PREFIX = /usr/local
 MANPREFIX = ${PREFIX}/man
