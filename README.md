@@ -1,5 +1,3 @@
-![svmidi screenshot](http://henriqueleng.github.io/media/svmidi.png)
-
 svmidi - simple virtual midi keyboard
 =====================================
 This is very simple virtual midi keyboard. It handle key presses and send 
@@ -15,6 +13,10 @@ Since OpenBSD is my main OS, and I don't have any Linux machine neither
 experience with ALSA, this program currently only works with sndio, so you
 may try it by installing sndio on your system, or sending me a patch with 
 ALSA support. Read bellow if you intend to do so.
+
+Screenshot
+----------
+![svmidi screenshot](http://henriqueleng.github.io/media/svmidi.png)
 
 Installation
 ------------
