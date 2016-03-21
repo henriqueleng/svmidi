@@ -7,4 +7,4 @@ BUGS:
 [*] fix intrument number input, better checks, and safer function.
 [ ] multiple keypresses at the same time may send additional unwanted notes.
 [ ] input line on instrument selection.
-[ ] intrument listing bad.
+[*] intrument listing bad.
