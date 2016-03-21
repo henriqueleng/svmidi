@@ -138,7 +138,6 @@ startwin(uint initial_width, uint initial_height)
 
 	/* Select kind of events we are interested in. */
 	XSelectInput(dpy, win, KeyPressMask | KeyReleaseMask |
-		ButtonPressMask | ButtonReleaseMask | 
 		StructureNotifyMask | ExposureMask);
 
 	/* Xdbe: back buffer */
