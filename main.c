@@ -318,14 +318,13 @@ run(void)
 						char input[25];
 
 						switch (e2.type) {
-
 						case KeyPress:
 							XLookupString(&e2.xkey, input, 25, &tmpkeysym, NULL);
-								XDrawString(dpy, buf, gc, 0, winheight - fontheight, string, i);
-								XdbeSwapBuffers(dpy, &swapinfo, 1);
-								string[i] = input[0];
-								i++;
-								break;
+							string[i] = input[0];
+							XDrawString(dpy, buf, gc, 0, winheight - fontheight, string, i + 1);
+							XdbeSwapBuffers(dpy, &swapinfo, 1);
+							i++;
+							break;
 
 						case ConfigureNotify:
 							winheight = e2.xconfigure.height;
@@ -337,8 +336,18 @@ run(void)
 					}
 					instrument = atoi(string);
 					if (instrument > 128) {
-						drawkeyboard();
-						XDrawString(dpy, buf, gc, 0, winheight - fontheight, "ERROR: number too large", 16);
+						instrument = 0;
+						cleanwindow();
+						drawinstruments();
+						char tmpstring[] = "ERROR: number too large";
+						XSetForeground(dpy, gc, xfontcolor);
+						XDrawString(dpy, buf, gc, 0, winheight - fontheight, tmpstring, strlen(tmpstring));
+						XdbeSwapBuffers(dpy, &swapinfo, 1);
+						/* wait for keypress */
+						e2.type = NoSymbol;
+						while (e2.type != KeyPress) {
+							XNextEvent(dpy, &e2);
+						}
 					} else {
 						changeinstrument(instrument);
 					}
