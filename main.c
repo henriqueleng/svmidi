@@ -366,6 +366,11 @@ run(void)
 					break;
 				}
 
+				if (keysym == XK_q && e.xkey.state & ControlMask) {
+					quit();
+					exit(EXIT_SUCCESS);
+				}
+
 				/* match key xkeypressedcolor with a member of whitekeys[] or blackkeys[] */
 				uint i = 0;
 				for (i = 0; i < nwhitekeys; i++) {
