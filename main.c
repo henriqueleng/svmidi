@@ -4,6 +4,7 @@
 #include <unistd.h>	/* usleep, getopt */
 #include <X11/keysym.h>
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 #include <X11/XKBlib.h>	/* XkbSetDetectableAutoRepeat() */
 #include <X11/extensions/Xdbe.h> /* double buffer */
 
@@ -61,6 +62,9 @@ XWindowAttributes wa;
 XdbeBackBuffer buf;
 XdbeBackBufferAttributes  *bufattr;
 XdbeSwapInfo swapinfo;
+
+void quit(void);
+
 
 void
 changeinstrument(int number)
@@ -163,8 +167,8 @@ void
 drawkeyboard(/* winheight */)
 {
 	char string[100];
-	sprintf(&string, "octave: %i   channel: %i    instrument: %i - %s", octave, channel, instrument, instruments[instrument].name);
-
+	snprintf(string, (size_t)100, "octave: %i   channel: %i    instrument: %i - %s", 
+		octave, channel, instrument, instruments[instrument].name);
 	/* 
 	 * TODO: is there really a need to fill a rectangle bellow text?
 	 */
@@ -260,12 +264,12 @@ drawinstruments(void)
 	}
 
 	char tmpstring[tmp];
-	sprintf(&tmpstring, "%i: %s", biggest, instruments[biggest].name);
+	snprintf(tmpstring, tmp, "%i: %s", biggest, instruments[biggest].name);
 	int textwidth = XTextWidth(font_info, tmpstring, strlen(tmpstring)) + 10;
 
 	for (i = 0; i < LENGTH(instruments); i++) {
 		char string[25];
-	    sprintf(&string, "%i: %s", i, instruments[i].name);
+	    snprintf(string, 25, "%i: %s", i, instruments[i].name);
 
 		if (subs >= (winheight / fontheight) - 1) {
 			spacey = fontheight;
