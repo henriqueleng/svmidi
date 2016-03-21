@@ -1,3 +1,4 @@
+................................................................................
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -325,7 +326,9 @@ run(void)
 						case KeyPress:
 							XLookupString(&e2.xkey, input, 25, &tmpkeysym, NULL);
 							string[i] = input[0];
-							XDrawString(dpy, buf, gc, 0, winheight - fontheight, string, i + 1);
+							XDrawString(dpy, buf, gc, 
+								0, winheight - fontheight, 
+								string, i + 1);
 							XdbeSwapBuffers(dpy, &swapinfo, 1);
 							i++;
 							break;
@@ -345,7 +348,9 @@ run(void)
 						drawinstruments();
 						char tmpstring[] = "ERROR: number too large";
 						XSetForeground(dpy, gc, xfontcolor);
-						XDrawString(dpy, buf, gc, 0, winheight - fontheight, tmpstring, strlen(tmpstring));
+						XDrawString(dpy, buf, gc,
+							0, winheight - fontheight, 
+							tmpstring, strlen(tmpstring));
 						XdbeSwapBuffers(dpy, &swapinfo, 1);
 						/* wait for keypress */
 						e2.type = NoSymbol;
