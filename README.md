@@ -37,7 +37,8 @@ a really good one with a lot of intruments.
 - Launch fluidsynth
     fluidsynth media/sf2/soundfont.sf2
 - Launch svmidi and have fun
-	svmidi -o 2
+
+    svmidi -o 2
 
 Contributing
 ------------
