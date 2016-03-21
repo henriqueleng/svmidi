@@ -44,7 +44,7 @@ Contributing
 ------------
 Send patches to my email, or do it via github.
 
-If you intendo to implement ALSA support, make sure to do so in a two files
+If you intend to implement ALSA support, make sure to do so in a two files
 alsa.c alsa.h, they must have the same functions with the same name 
 as in sndio.c, sndio.h, so there will be no need to fill the code with lots 
 of #ifdef's. Makefile already have a line to that, and svmidi.c too.
