@@ -138,7 +138,8 @@ startwin(uint initial_width, uint initial_height)
 
 	/* Select kind of events we are interested in. */
 	XSelectInput(dpy, win, KeyPressMask | KeyReleaseMask |
-		ButtonPressMask | ButtonReleaseMask | StructureNotifyMask | PointerMotionMask);
+		ButtonPressMask | ButtonReleaseMask | 
+		StructureNotifyMask | ExposureMask);
 
 	/* Xdbe: back buffer */
 	buf = XdbeAllocateBackBufferName(dpy, win, XdbeUndefined);
@@ -296,9 +297,9 @@ run(void)
 		switch (e.type) {
 
 		case KeyPress:
-			if (e.xkey.keycode == lastpress) {
+			if (e.xkey.keycode == lastpress)
 				break;
-			}
+
 				keysym = XLookupKeysym (&e.xkey, 0);
 
 				/* enter instrument select loop if Ctrl + i*/
@@ -326,7 +327,7 @@ run(void)
 								XdbeSwapBuffers(dpy, &swapinfo, 1);
 								string[i] = input[0];
 								i++;
-							break;
+								break;
 
 						case ConfigureNotify:
 							winheight = e2.xconfigure.height;
@@ -343,6 +344,7 @@ run(void)
 					} else {
 						changeinstrument(instrument);
 					}
+					break;
 				}
 
 				if (keysym == XK_k && e.xkey.state & ControlMask && octave < 9) {
@@ -413,19 +415,14 @@ run(void)
 			lastpress = 0;
 			break;
 
-		case ButtonPress:
-			break;
-
-		case ButtonRelease:
-			break;
-
 		case ConfigureNotify:
 			winheight = e.xconfigure.height;
 			winwidth = e.xconfigure.width;
 			drawkeyboard();
 			break;
 
-		case MotionNotify:
+		case Expose:
+			drawkeyboard();
 			break;
 
 		default:
