@@ -128,7 +128,6 @@ startwin(uint initial_width, uint initial_height)
 	}
 
 	fontheight = font_info->ascent + font_info->descent;
-	//printf("font height: %i\n", fontheight);
 
 	XGCValues values;
 	ulong valuemask = 0;
@@ -269,7 +268,7 @@ drawinstruments(void)
 	    sprintf(&string, "%i: %s", i, instruments[i].name);
 
 		if (subs >= (winheight / fontheight) - 1) {
-			spacey = 0;
+			spacey = fontheight;
 			spacex += textwidth;
 			subs = 0;
 		} else {
