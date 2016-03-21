@@ -313,14 +313,14 @@ run(void)
 					/* vars */
 					XEvent e2;
 					KeySym tmpkeysym = NoSymbol;
-					char string[4];
 
+					char string[10];
 					uint i = 0;
 					XSetForeground(dpy, gc, xfontcolor);
+
 					while (tmpkeysym != XK_Return) {
 						XNextEvent(dpy, &e2);
 						char input[25];
-
 						switch (e2.type) {
 						case KeyPress:
 							XLookupString(&e2.xkey, input, 25, &tmpkeysym, NULL);
