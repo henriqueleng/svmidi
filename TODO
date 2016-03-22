@@ -1,10 +1,11 @@
 [ ] alsa, via alsa.c alsa.h
 [ ] bender
-[*] command line options like default octave
 [ ] look for code duplication 
+[ ] once the software shows no bug, create a release
+[*] command line options like default octave
 
 BUGS:
-[*] fix intrument number input, better checks, and safer function.
 [ ] multiple keypresses at the same time may send additional unwanted notes.
+[*] fix intrument number input, better checks, and safer function.
 [*] input line on instrument selection.
 [*] intrument listing bad.
