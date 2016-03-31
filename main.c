@@ -127,7 +127,7 @@ startwin(uint initial_width, uint initial_height)
 	/* try to load the given font. */
 	font_info = XLoadQueryFont(dpy, font);
 	if (!font_info) {
-	    fprintf(stderr, "XLoadQueryFont: failed loading font: %s\n", font);
+		fprintf(stderr, "XLoadQueryFont: failed loading font: %s\n", font);
 		exit(EXIT_FAILURE);
 	}
 
@@ -159,8 +159,8 @@ startwin(uint initial_width, uint initial_height)
 
 	/* get initial window size */
 	XGetWindowAttributes(dpy, win, &wa);
-    winwidth = wa.width;
-    winheight = wa.height;
+	winwidth = wa.width;
+	winheight = wa.height;
 }
 
 void
@@ -229,7 +229,7 @@ drawkeyboard(/* winheight */)
 			XFillRectangle(dpy, buf, gc, usedspace + ((keywidth * 2) / 3), 
 				fontheight, (keywidth * 2) / 3 , (keyheight * 2) / 3);
 		} else if (blackkeys[totalkeys].status == RELEASED) {
-    		XSetForeground(dpy, gc, xsharpkeycolor);
+			XSetForeground(dpy, gc, xsharpkeycolor);
 			XFillRectangle(dpy, buf, gc, usedspace + ((keywidth * 2) / 3), 
 				fontheight, (keywidth * 2) / 3 , (keyheight * 2 / 3)); 
 		}
@@ -269,7 +269,7 @@ drawinstruments(void)
 
 	for (i = 0; i < LENGTH(instruments); i++) {
 		char string[25];
-	    snprintf(string, 25, "%i: %s", i, instruments[i].name);
+		snprintf(string, 25, "%i: %s", i, instruments[i].name);
 
 		if (subs >= (winheight / fontheight) - 1) {
 			spacey = fontheight;
@@ -288,8 +288,8 @@ drawinstruments(void)
 void
 run(void)
 {
-    uint nwhitekeys = (int)LENGTH(whitekeys);
-    uint nblackkeys = (int)LENGTH(blackkeys);
+	uint nwhitekeys = (int)LENGTH(whitekeys);
+	uint nblackkeys = (int)LENGTH(blackkeys);
 	KeySym keysym;
 	XEvent e;
 	uint lastpress;
@@ -416,21 +416,21 @@ run(void)
 
 				keysym = XLookupKeysym (&e.xkey, 0);
 				
-                for (i = 0; i < nwhitekeys; i++) {
-                    if (whitekeys[i].keysym == keysym) {
+				for (i = 0; i < nwhitekeys; i++) {
+					if (whitekeys[i].keysym == keysym) {
 						sendnote(NOTE_OFF, whitekeys[i].note, 100);
-                        whitekeys[i].status = RELEASED;
-                        break;
-                    }
-                }
+						whitekeys[i].status = RELEASED;
+						break;
+					}
+				}
 
-                for (i = 0; i < nblackkeys; i++) {
-                    if (blackkeys[i].keysym == keysym) {
-                        blackkeys[i].status = RELEASED;
+				for (i = 0; i < nblackkeys; i++) {
+					if (blackkeys[i].keysym == keysym) {
+						blackkeys[i].status = RELEASED;
 						sendnote(NOTE_OFF, blackkeys[i].note, 100);
-                        break;
-                    }
-                }
+						break;
+					}
+				}
 			drawkeyboard();
 			lastpress = 0;
 			break;
