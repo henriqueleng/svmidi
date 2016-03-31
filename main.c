@@ -233,10 +233,10 @@ drawkeyboard(/* winheight */)
 			XFillRectangle(dpy, buf, gc, usedspace + ((keywidth * 2) / 3), 
 				fontheight, (keywidth * 2) / 3 , (keyheight * 2 / 3)); 
 		}
-			usedspace += keywidth;
-			subskeys++;
-			totalkeys++;
-			nblackkeys--;
+		usedspace += keywidth;
+		subskeys++;
+		totalkeys++;
+		nblackkeys--;
 	}
 
 	XdbeSwapBuffers(dpy, &swapinfo, 1);
@@ -321,6 +321,7 @@ run(void)
 					while (tmpkeysym != XK_Return) {
 						XNextEvent(dpy, &e2);
 						char input[25];
+
 						switch (e2.type) {
 						case KeyPress:
 							XLookupString(&e2.xkey, input, 25, &tmpkeysym, NULL);
