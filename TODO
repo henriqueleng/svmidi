@@ -1,4 +1,5 @@
 [ ] alsa, via alsa.c alsa.h
+[ ] record to file? print midi data to stdout, allowing handling messages with pipes?
 [ ] bender
 [ ] look for code duplication 
 [ ] once the software shows no bug, create a release
