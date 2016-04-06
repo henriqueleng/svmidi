@@ -2,8 +2,8 @@
 # VERSION = 0
 
 # SOURCE
-SOURCE = main.c sndio.c
-OBJ = main.o sndio.o
+SOURCE = main.c sndio.c alsa.c
+OBJ = main.o
 HDR = midi.h config.h
 
 PREFIX = /usr/local
@@ -15,10 +15,14 @@ XFLAGS = `pkg-config --cflags x11`
 
 SOUNDLIBS = -lsndio
 SOUNDFLAGS = -DSNDIO
+SOUNDOBJ = sndio.o
 # TODO: implement #
 #uncomment for ALSA
-#SOUNDLIBS = -lalsa
+#SOUNDLIBS = -lasound
 #SOUNDFLAGS = -DALSA
+#SOUNDOBJ = alsa.o
+
+OBJ += $(SOUNDOBJ)
 
 LIBS = ${XLIBS} ${SOUNDLIBS}
 CFLAGS = -g -std=c99 -pedantic -Wall -O0 ${XFLAGS} ${SOUNDFLAGS}
