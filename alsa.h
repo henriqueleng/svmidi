@@ -4,7 +4,6 @@
 extern snd_seq_t *hdl;
 
 /* functions */
-void _midisend(unsigned char [], size_t);
-#define midisend(msg) _midisend(msg, sizeof(msg))
+void midisend(unsigned char [], size_t);
 int midiopen(void);
 void midiclose(void);
