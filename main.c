@@ -70,7 +70,7 @@ void
 changeinstrument(int number)
 {
 	u_char message[] = {PRG_CHANGE | channel, number};
-	midisend(message);
+	midisend(message, sizeof(message));
 }
 
 void
@@ -79,7 +79,7 @@ sendnote(int action, int note, int speed)
 	int mult = octave;
 	mult++;
 	u_char message[] = {action | channel, note + (OCTAVE_VALUE * mult), speed};
-	midisend(message);
+	midisend(message, sizeof(message));
 }
 
 /* idea from suckless:svkbd */

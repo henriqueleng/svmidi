@@ -16,9 +16,9 @@ midiopen(void)
 
 /* send message */
 void
-midisend(u_char message[])
+midisend(u_char message[], size_t size)
 {
-	mio_write(hdl, message, sizeof(message));
+	mio_write(hdl, message, size);
 }
 
 /* close */
