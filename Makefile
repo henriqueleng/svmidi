@@ -16,7 +16,7 @@ XFLAGS = `pkg-config --cflags x11`
 SOUNDLIBS = -lsndio
 SOUNDFLAGS = -DSNDIO
 SOUNDOBJ = sndio.o
-# TODO: implement #
+
 #uncomment for ALSA
 #SOUNDLIBS = -lasound
 #SOUNDFLAGS = -DALSA

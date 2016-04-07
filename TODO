@@ -1,9 +1,9 @@
-[ ] alsa, via alsa.c alsa.h
 [ ] record to file? print midi data to stdout, allowing handling messages with pipes?
 [ ] bender
 [ ] look for code duplication 
 [ ] once the software shows no bug, create a release
 [*] command line options like default octave
+[needs more feedback] alsa, via alsa.c alsa.h
 
 BUGS:
 [ ] multiple keypresses at the same time may send additional unwanted notes.
