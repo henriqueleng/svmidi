@@ -265,7 +265,7 @@ drawinstruments(void)
 
 	for (i = 0; i < LENGTH(instruments); i++) {
 		char string[25];
-		snprintf(string, 25, "%i: %s", i, instruments[i].name);
+		snprintf(string, 25, "%i: %s", instruments[i].number, instruments[i].name);
 
 		if (subs >= (winheight / fontheight) - 1) {
 			spacey = fontheight;
