@@ -24,7 +24,7 @@ midiopen(void)
 
 /* send message */
 void
-_midisend(unsigned char message[], size_t count)
+midisend(unsigned char message[], size_t count)
 {
 	snd_seq_event_t ev;
 
