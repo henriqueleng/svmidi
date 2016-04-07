@@ -65,7 +65,6 @@ XdbeSwapInfo swapinfo;
 
 void quit(void);
 
-
 void
 changeinstrument(int number)
 {
@@ -82,7 +81,7 @@ sendnote(int action, int note, int speed)
 	midisend(message, sizeof(message));
 }
 
-/* idea from suckless:svkbd */
+/* idea from svkbd */
 ulong
 getcolor(const char *colstr)
 {
