@@ -11,8 +11,6 @@
 typedef unsigned int uint;
 typedef unsigned long ulong;
 
-#include "midi.h"
-
 #ifdef ALSA
 #include "alsa.h"
 #endif
@@ -38,11 +36,7 @@ typedef struct {
 	int status;
 } Key;
 
-typedef struct {
-	int number;
-	char *name;
-} Instrument;
-
+#include "midi.h"
 #include "config.h"
 
 /* Xlib */
