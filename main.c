@@ -328,11 +328,11 @@ run(void)
 						}
 					}
 					instrument = atoi(string);
-					if (instrument > 128) {
+					if (instrument > 127 || instrument < 0) {
 						instrument = 0;
 						cleanwindow();
 						drawinstruments();
-						char tmpstring[] = "ERROR: number too large";
+						char tmpstring[] = "ERROR: number out of range";
 						XSetForeground(dpy, gc, xfontcolor);
 						XDrawString(dpy, buf, gc,
 							0, winheight - fontheight, 
