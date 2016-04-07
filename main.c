@@ -11,7 +11,6 @@
 #include "midi.h"
 #include "util.h"
 
-/* future: implement alsa */
 #ifdef ALSA
 #include "alsa.h"
 #endif
@@ -168,9 +167,8 @@ drawkeyboard(/* winheight */)
 	char string[100];
 	snprintf(string, (size_t)100, "octave: %i   channel: %i    instrument: %i - %s", 
 		octave, channel, instrument, instruments[instrument].name);
-	/* 
-	 * TODO: is there really a need to fill a rectangle bellow text?
-	 */
+
+	/* is there really a need to fill a rectangle bellow text? */
 	XSetForeground(dpy, gc, xbgcolor);
 	XFillRectangle(dpy, buf, gc, 0, 0, winwidth, winheight);
 
