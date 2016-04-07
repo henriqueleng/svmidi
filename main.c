@@ -288,16 +288,12 @@ run(void)
 	uint nblackkeys = (int)LENGTH(blackkeys);
 	KeySym keysym;
 	XEvent e;
-	uint lastpress;
 
 	while (1) {
 		XNextEvent(dpy, &e);
 		switch (e.type) {
 
 		case KeyPress:
-			if (e.xkey.keycode == lastpress)
-				break;
-
 				keysym = XLookupKeysym (&e.xkey, 0);
 
 				/* enter instrument select loop if Ctrl + i*/
@@ -387,7 +383,8 @@ run(void)
 				/* match key with a member of whitekeys[] or blackkeys[] */
 				uint i = 0;
 				for (i = 0; i < nwhitekeys; i++) {
-					if (whitekeys[i].keysym == keysym) {
+					if (whitekeys[i].keysym == keysym &&
+					    whitekeys[i].status == RELEASED) {
 						sendnote(NOTE_ON, whitekeys[i].note, 100);
 						whitekeys[i].status = PRESSED;
 						break;
@@ -395,7 +392,8 @@ run(void)
 				}
 
 				for (i = 0; i < nblackkeys; i++) {
-					if (blackkeys[i].keysym == keysym) {
+					if (blackkeys[i].keysym == keysym &&
+					    blackkeys[i].status == RELEASED) {
 						sendnote(NOTE_ON, blackkeys[i].note, 100);
 						blackkeys[i].status = PRESSED;
 						break;
@@ -403,18 +401,14 @@ run(void)
 				}
 
 				drawkeyboard();
-				lastpress = e.xkey.keycode;
 			break;
 
 		case KeyRelease:
-			/* magic to avoid key repetition */
-			if (e.xkey.keycode == lastpress)
-				lastpress = 0;
-
 				keysym = XLookupKeysym (&e.xkey, 0);
 				
 				for (i = 0; i < nwhitekeys; i++) {
-					if (whitekeys[i].keysym == keysym) {
+					if (whitekeys[i].keysym == keysym &&
+					    whitekeys[i].status == PRESSED) {
 						sendnote(NOTE_OFF, whitekeys[i].note, 100);
 						whitekeys[i].status = RELEASED;
 						break;
@@ -422,14 +416,14 @@ run(void)
 				}
 
 				for (i = 0; i < nblackkeys; i++) {
-					if (blackkeys[i].keysym == keysym) {
+					if (blackkeys[i].keysym == keysym &&
+					    blackkeys[i].status == PRESSED) {
 						blackkeys[i].status = RELEASED;
 						sendnote(NOTE_OFF, blackkeys[i].note, 100);
 						break;
 					}
 				}
 			drawkeyboard();
-			lastpress = 0;
 			break;
 
 		case ConfigureNotify:
