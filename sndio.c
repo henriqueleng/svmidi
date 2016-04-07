@@ -1,4 +1,5 @@
 #include <sndio.h>
+#include <stdlib.h>
 
 struct mio_hdl *hdl;
 
@@ -16,7 +17,7 @@ midiopen(void)
 
 /* send message */
 void
-midisend(u_char message[], size_t size)
+midisend(unsigned char message[], size_t size)
 {
 	mio_write(hdl, message, size);
 }

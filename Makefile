@@ -25,7 +25,7 @@ SOUNDOBJ = sndio.o
 OBJ += $(SOUNDOBJ)
 
 LIBS = ${XLIBS} ${SOUNDLIBS}
-CFLAGS = -g -std=c99 -pedantic -Wall -O0 ${XFLAGS} ${SOUNDFLAGS}
+CFLAGS = -g -std=c99 -pedantic -Wall -O0 ${XFLAGS} ${SOUNDFLAGS} -D_POSIX_C_SOURCE=200112L
 
 BIN = svmidi
 

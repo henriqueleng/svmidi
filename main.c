@@ -8,8 +8,10 @@
 #include <X11/XKBlib.h>	/* XkbSetDetectableAutoRepeat() */
 #include <X11/extensions/Xdbe.h> /* double buffer */
 
+typedef unsigned int uint;
+typedef unsigned long ulong;
+
 #include "midi.h"
-#include "util.h"
 
 #ifdef ALSA
 #include "alsa.h"
@@ -41,9 +43,6 @@ typedef struct {
 	char *name;
 } Instrument;
 
-typedef unsigned int uint;
-typedef unsigned long ulong;
-
 #include "config.h"
 
 /* Xlib */
@@ -67,7 +66,7 @@ void quit(void);
 void
 changeinstrument(int number)
 {
-	u_char message[] = {PRG_CHANGE | channel, number};
+	unsigned char message[] = {PRG_CHANGE | channel, number};
 	midisend(message, sizeof(message));
 }
 
@@ -76,7 +75,7 @@ sendnote(int action, int note, int speed)
 {
 	int mult = octave;
 	mult++;
-	u_char message[] = {action | channel, note + (OCTAVE_VALUE * mult), speed};
+	unsigned char message[] = {action | channel, note + (OCTAVE_VALUE * mult), speed};
 	midisend(message, sizeof(message));
 }
 
