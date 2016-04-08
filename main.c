@@ -304,7 +304,7 @@ run(void)
 					uint i = 0;
 					XSetForeground(dpy, gc, xfontcolor);
 
-					while (tmpkeysym != XK_Return) {
+					while (tmpkeysym != XK_Return && tmpkeysym != XK_KP_Enter) {
 						XNextEvent(dpy, &e2);
 						char input[25];
 
