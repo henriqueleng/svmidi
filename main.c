@@ -243,34 +243,31 @@ cleanwindow(void) /* winheight, winwidth */
 void
 drawinstruments(void)
 {
-	uint spacex = 0, spacey = 0, i, subs;
+	uint spacex = 0, spacey = 0, i;
 
-	uint biggest = 0, tmp = 0;
-	for (i = 1; i < LENGTH(instruments); i++) {
-		if ((strlen(instruments[i].name)) > tmp) {
-			tmp = strlen(instruments[i].name);
+	uint biggest = 0, len = 0;
+	for (i = 0; i < LENGTH(instruments); i++) {
+		if ((strlen(instruments[i].name)) > len) {
+			len = strlen(instruments[i].name);
 			biggest = i;
 		}
 	}
 
-	char tmpstring[tmp];
-	snprintf(tmpstring, tmp, "%i: %s", biggest, instruments[biggest].name);
-	int textwidth = XTextWidth(font_info, tmpstring, strlen(tmpstring)) + 10;
+	len += 5;
+	int textwidth = XTextWidth(font_info, instruments[biggest].name, len) + 10;
 
 	for (i = 0; i < LENGTH(instruments); i++) {
-		char string[25];
-		snprintf(string, 25, "%i: %s", instruments[i].number, instruments[i].name);
+		char string[len];
+		snprintf(string, len, "%i: %s", instruments[i].number, instruments[i].name);
 
-		if (subs >= (winheight / fontheight) - 1) {
+		if (spacey >= winheight - (fontheight * 2)) {
 			spacey = fontheight;
 			spacex += textwidth;
-			subs = 0;
 		} else {
 			spacey += fontheight;
 		}
 		XSetForeground(dpy, gc, xfontcolor);
 		XDrawString(dpy, buf, gc, spacex, spacey, string, strlen(string));
-		subs++;
 	}
 	XdbeSwapBuffers(dpy, &swapinfo, 1);
 }
@@ -290,7 +287,7 @@ run(void)
 		case KeyPress:
 				keysym = XLookupKeysym (&e.xkey, 0);
 
-				/* enter instrument select loop if Ctrl + i*/
+				/* enter instrument select loop if Ctrl + i */
 				if (keysym == XK_i && e.xkey.state & ControlMask) {
 					keysym = NoSymbol;
 					cleanwindow();
@@ -312,8 +309,8 @@ run(void)
 						case KeyPress:
 							XLookupString(&e2.xkey, input, 25, &tmpkeysym, NULL);
 							string[i] = input[0];
-							XDrawString(dpy, buf, gc, 
-								0, winheight - fontheight, 
+							XDrawString(dpy, buf, gc,
+								0, winheight - 5, 
 								string, i + 1);
 							XdbeSwapBuffers(dpy, &swapinfo, 1);
 							i++;
@@ -335,7 +332,7 @@ run(void)
 						char tmpstring[] = "ERROR: number out of range";
 						XSetForeground(dpy, gc, xfontcolor);
 						XDrawString(dpy, buf, gc,
-							0, winheight - fontheight, 
+							0, winheight - 5, 
 							tmpstring, strlen(tmpstring));
 						XdbeSwapBuffers(dpy, &swapinfo, 1);
 						/* wait for keypress */
