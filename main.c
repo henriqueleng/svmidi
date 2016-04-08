@@ -486,8 +486,8 @@ main(int argc, char *argv[])
 	}
 
 	channel = 1;
-	if (instrument > 127) {
-		fprintf(stderr, "intrument number too big, max. is 127\n");
+	if (instrument > 127 || instrument < 0) {
+		fprintf(stderr, "intrument number out of range\n");
 		exit(EXIT_FAILURE);
 	} else
 		changeinstrument(instrument);
