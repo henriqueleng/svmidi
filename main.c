@@ -298,13 +298,13 @@ run(void)
 					XEvent e2;
 					KeySym tmpkeysym = NoSymbol;
 
-					char string[10];
+					char string[10] = {0};
 					uint i = 0;
 					XSetForeground(dpy, gc, xfontcolor);
 
 					while (tmpkeysym != XK_Return && tmpkeysym != XK_KP_Enter) {
 						XNextEvent(dpy, &e2);
-						char input[25];
+						char input[25] = {0};
 
 						switch (e2.type) {
 						case KeyPress:
