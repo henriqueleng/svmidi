@@ -47,7 +47,7 @@ static Window win;
 GC gc;
 Colormap colormap;
 ulong xkeycolor, xkeypressedcolor, xsharpkeycolor, 
-xsharpkeypressedcolor, xkeybordercolor, xfontcolor, xbgcolor;
+	xsharpkeypressedcolor, xkeybordercolor, xfontcolor, xbgcolor;
 XFontStruct* font_info;
 XWindowAttributes wa;
 
