@@ -366,7 +366,7 @@ run(void)
 					break;
 				}
 
-				if (keysym == XK_h && e.xkey.state & ControlMask) {
+				if (keysym == XK_h && e.xkey.state & ControlMask && channel > 0) {
 					channel--;
 					break;
 				}
