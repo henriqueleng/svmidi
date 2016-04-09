@@ -494,7 +494,7 @@ main(int argc, char *argv[])
 	} else
 		changeinstrument(instrument);
 
-	startwin(640, 400);
+	startwin(1000, 400);
 	run();
 	quit();
 	return 0;
