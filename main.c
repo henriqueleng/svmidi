@@ -481,18 +481,24 @@ main(int argc, char *argv[])
 	argc -= optind;
 	argv += optind;
 
+	if (instrument > 127 || instrument < 0) {
+		fprintf(stderr, "intrument number out of range\n");
+		exit(EXIT_FAILURE);
+	}
+
+	if (octave > 9 || octave < -1) {
+		fprintf(stderr, "octave number out of range\n");
+		exit(EXIT_FAILURE);
+	}
+
 	/* start midi */
 	if (midiopen()) {
 		fprintf(stderr, "failed to open MIDI device\n");
 		exit(EXIT_FAILURE);
 	}
+	changeinstrument(instrument);
 
 	channel = 1;
-	if (instrument > 127 || instrument < 0) {
-		fprintf(stderr, "intrument number out of range\n");
-		exit(EXIT_FAILURE);
-	} else
-		changeinstrument(instrument);
 
 	startwin(1000, 400);
 	run();
