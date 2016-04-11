@@ -300,7 +300,7 @@ run(void)
 					       tmpkeysym != XK_Return &&
 					       tmpkeysym != XK_KP_Enter) {
 						XNextEvent(dpy, &e2);
-						char input[25] = {0};
+						char input[1] = {0};
 
 						switch (e2.type) {
 						case KeyPress:
