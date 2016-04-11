@@ -25,11 +25,11 @@ typedef unsigned long ulong;
 #define RELEASED 0
 
 /* variables */
-uint winwidth;
-uint winheight;
+uint winwidth, winheight;
 const uint keywidth = 50;
 uint keyheight;
 uint fontheight;
+uint nwhitekeys, nblackkeys;
 
 typedef struct {
 	KeySym keysym;
@@ -173,8 +173,6 @@ drawkeyboard(/* winheight */)
 	uint i = 0;
 
 	keyheight = winheight - 10;
-	uint nwhitekeys = (int)LENGTH(whitekeys);
-	uint nblackkeys = (int)LENGTH(blackkeys);
 
 	/* 
 	 * White keys must be drawn first so they stay beneath black ones. 
@@ -202,7 +200,7 @@ drawkeyboard(/* winheight */)
 	uint alternate = 1;
 
 	/* draw black keys */
-	while (nblackkeys > 1) {
+	for (i = nblackkeys; i > 1; i--) {
 		/* alternate between 3 and 2 subsequent keys */
 		if (alternate == 1 && subskeys == 2) {
 			usedspace += keywidth;
@@ -227,7 +225,6 @@ drawkeyboard(/* winheight */)
 		usedspace += keywidth;
 		subskeys++;
 		totalkeys++;
-		nblackkeys--;
 	}
 
 	XdbeSwapBuffers(dpy, &swapinfo, 1);
@@ -276,8 +273,6 @@ drawinstruments(void)
 void
 run(void)
 {
-	uint nwhitekeys = (int)LENGTH(whitekeys);
-	uint nblackkeys = (int)LENGTH(blackkeys);
 	KeySym keysym;
 	XEvent e;
 
@@ -499,6 +494,8 @@ main(int argc, char *argv[])
 	changeinstrument(instrument);
 
 	channel = 1;
+	nwhitekeys = (int)LENGTH(whitekeys);
+	nblackkeys = (int)LENGTH(blackkeys);
 
 	startwin(1000, 400);
 	run();
