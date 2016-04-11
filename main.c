@@ -9,9 +9,6 @@
 #include <X11/XKBlib.h>	/* XkbSetDetectableAutoRepeat() */
 #include <X11/extensions/Xdbe.h> /* double buffer */
 
-typedef unsigned int uint;
-typedef unsigned long ulong;
-
 #ifdef ALSA
 #include "alsa.h"
 #endif
@@ -23,6 +20,9 @@ typedef unsigned long ulong;
 #define LENGTH(x)        (sizeof x / sizeof x[0])
 #define PRESSED  1
 #define RELEASED 0
+
+typedef unsigned int uint;
+typedef unsigned long ulong;
 
 /* variables */
 uint winwidth, winheight;
@@ -323,6 +323,7 @@ run(void)
 							break;
 						}
 					}
+
 					instrument = atoi(string);
 					if (instrument > 127 || instrument < 0) {
 						instrument = 0;
@@ -395,7 +396,7 @@ run(void)
 
 		case KeyRelease:
 				keysym = XLookupKeysym (&e.xkey, 0);
-				
+
 				for (i = 0; i < nwhitekeys; i++) {
 					if (whitekeys[i].keysym == keysym &&
 					    whitekeys[i].status == PRESSED) {
@@ -492,6 +493,7 @@ main(int argc, char *argv[])
 	}
 	changeinstrument(instrument);
 
+	/* assign some variables */
 	channel = 1;
 	nwhitekeys = (int)LENGTH(whitekeys);
 	nblackkeys = (int)LENGTH(blackkeys);
