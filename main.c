@@ -177,7 +177,7 @@ drawkeyboard(/* winheight */)
 	/* 
 	 * White keys must be drawn first so they stay beneath black ones. 
 	 */
-	while (i < nwhitekeys) {
+	for (i = 0; i < nwhitekeys; i++) {
 		if (whitekeys[totalkeys].status == PRESSED) {
 			XSetForeground(dpy, gc, xkeypressedcolor);
 			XFillRectangle(dpy, buf, gc, usedspace, fontheight, keywidth, keyheight);
@@ -188,7 +188,6 @@ drawkeyboard(/* winheight */)
 		}
 		XSetForeground(dpy, gc, xkeybordercolor);
 		XDrawRectangle(dpy, buf, gc, usedspace, fontheight, keywidth, keyheight);
-		i++;
 		usedspace += keywidth;
 		totalkeys++;
 	}
