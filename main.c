@@ -276,6 +276,7 @@ run(void)
 	XEvent e;
 
 	while (1) {
+		uint i = 0;
 		XNextEvent(dpy, &e);
 		switch (e.type) {
 
@@ -293,7 +294,6 @@ run(void)
 					KeySym tmpkeysym = NoSymbol;
 
 					char string[10] = {0};
-					uint i = 0;
 					XSetForeground(dpy, gc, xfontcolor);
 
 					while (i < sizeof(string) - 1 &&
@@ -372,7 +372,6 @@ run(void)
 				}
 
 				/* match key with a member of whitekeys[] or blackkeys[] */
-				uint i = 0;
 				for (i = 0; i < nwhitekeys; i++) {
 					if (whitekeys[i].keysym == keysym &&
 					    whitekeys[i].status == RELEASED) {
