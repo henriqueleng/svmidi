@@ -476,7 +476,7 @@ main(int argc, char *argv[])
 {
 	int ch;
 
-	while ((ch = getopt(argc, argv, "i:o:h")) != -1) {
+	while ((ch = getopt(argc, argv, "i:o:hv")) != -1) {
 		switch (ch) {
 		case 'i':
 			instrument = atoi(optarg);
@@ -487,6 +487,9 @@ main(int argc, char *argv[])
 		case 'h':
 			usage();
 			break;
+		case 'v':
+			printf("svmidi-"VERSION"\n");
+			return 0;
 		default:
 			break;
 		}

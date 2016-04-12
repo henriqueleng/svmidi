@@ -1,5 +1,5 @@
 # See LICENSE file for copyright and license details.
-# VERSION = 0
+VERSION = 0.1
 
 # SOURCE
 SOURCE = main.c sndio.c alsa.c
@@ -25,29 +25,30 @@ SOUNDOBJ = sndio.o
 OBJ += $(SOUNDOBJ)
 
 LIBS = ${XLIBS} ${SOUNDLIBS}
-CFLAGS = -g -std=c99 -pedantic -Wall -O0 ${XFLAGS} ${SOUNDFLAGS} -D_POSIX_C_SOURCE=200112L
+CFLAGS = -g -std=c99 -pedantic -Wall -O0 ${XFLAGS} ${SOUNDFLAGS} -D_POSIX_C_SOURCE=200112L -DVERSION=\"${VERSION}\"
 
 BIN = svmidi
 
 all: ${SOURCE} ${BIN}
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	@${CC} -c ${CFLAGS} $<
 
 ${OBJ}: midi.h sndio.h
 
 ${BIN}: ${OBJ} ${HDR}
-	${CC} ${CFLAGAS} -o ${BIN} ${OBJ} ${LIBS}
+	@${CC} ${CFLAGAS} -o ${BIN} ${OBJ} ${LIBS}
 
 install: all
-	mkdir -p ${DESTDIR}${PREFIX}/bin
-	cp -f ${BIN} ${DESTDIR}${PREFIX}/bin
-	mkdir -p ${DESTDIR}${MANPREFIX}/man1
-	cp -f ${BIN}.1 ${DESTDIR}${MANPREFIX}/man1
+	@mkdir -p ${DESTDIR}${PREFIX}/bin
+	@cp -f ${BIN} ${DESTDIR}${PREFIX}/bin
+	@mkdir -p ${DESTDIR}${MANPREFIX}/man1
+	@cp -f ${BIN}.1 ${DESTDIR}${MANPREFIX}/man1
+	@sed "s/VERSION/${VERSION}/g" < svmidi.1 > ${DESTDIR}${MANPREFIX}/man1/svmidi.1
 
 uninstall:
-	rm -f ${DESTDIR}${PREFIX}/bin/${BIN}
-	rm -f ${DESTDIR}${MANPREFIX}/man1/${BIN}.1
+	@rm -f ${DESTDIR}${PREFIX}/bin/${BIN}
+	@rm -f ${DESTDIR}${MANPREFIX}/man1/${BIN}.1
 
 clean:
-	rm -f ${BIN} ${OBJ}
+	@rm -f ${BIN} ${OBJ}
