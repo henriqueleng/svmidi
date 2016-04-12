@@ -287,16 +287,23 @@ run(void)
 					keysym = NoSymbol;
 					cleanwindow();
 					drawinstruments();
-					XdbeSwapBuffers(dpy, &swapinfo, 1);
 
 					/* vars */
 					XEvent e2;
 					KeySym tmpkeysym = NoSymbol;
 
 					char string[10] = {0};
-					XSetForeground(dpy, gc, xfontcolor);
 
+					char prompt[] = "> ";
+					int promptwidth = XTextWidth(font_info, prompt, strlen(prompt));
+
+					XDrawString(dpy, buf, gc, 0, winheight - 5,
+						prompt , strlen(prompt));
+					XdbeSwapBuffers(dpy, &swapinfo, 1);
+
+					XSetForeground(dpy, gc, xfontcolor);
 					int len = 0;
+
 					while (len < 10 - 1 &&
 					       tmpkeysym != XK_Return &&
 					       tmpkeysym != XK_KP_Enter) {
@@ -310,23 +317,20 @@ run(void)
 							if (isdigit(input[0])) {
 								string[len] = input[0];
 								string[len + 1] = '\0';
-								XDrawString(dpy, buf, gc,
-									0, winheight - 5,
-									string, len + 1);
-								XdbeSwapBuffers(dpy, &swapinfo, 1);
 								i++;
-								break;
-							}
-							if (tmpkeysym == XK_BackSpace) {
+							} else if (tmpkeysym == XK_BackSpace) {
 								string[len - 1] = '\0';
-								cleanwindow();
-								drawinstruments();
-								XDrawString(dpy, buf, gc,
-									0, winheight - 5,
-									string, len - 1);
-								XdbeSwapBuffers(dpy, &swapinfo, 1);
-								break;
 							}
+
+							cleanwindow();
+							drawinstruments();
+							XDrawString(dpy, buf, gc,
+								0, winheight - 5,
+								prompt , strlen(prompt));
+							XDrawString(dpy, buf, gc,
+								promptwidth, winheight - 5,
+								string, strlen(string));
+							XdbeSwapBuffers(dpy, &swapinfo, 1);
 							break;
 
 						case ConfigureNotify:
