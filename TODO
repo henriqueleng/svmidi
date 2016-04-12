@@ -1,8 +1,8 @@
-[ ] bender (by mouse?)
-[*] better input on instrument selection
+[ ] bender (by mouse? scrollwheel?)
 [ ] once the software shows no bug, create a release
 [*] command line options like default octave
 [needs more feedback] alsa, via alsa.c alsa.h
+[*] better input on instrument selection
 
 BUGS:
 [*] multiple keypresses at the same time may send additional unwanted notes.
