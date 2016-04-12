@@ -266,7 +266,6 @@ drawinstruments(void)
 		XSetForeground(dpy, gc, xfontcolor);
 		XDrawString(dpy, buf, gc, spacex, spacey, string, strlen(string));
 	}
-	XdbeSwapBuffers(dpy, &swapinfo, 1);
 }
 
 void
@@ -288,6 +287,7 @@ run(void)
 					keysym = NoSymbol;
 					cleanwindow();
 					drawinstruments();
+					XdbeSwapBuffers(dpy, &swapinfo, 1);
 
 					/* vars */
 					XEvent e2;
@@ -296,7 +296,8 @@ run(void)
 					char string[10] = {0};
 					XSetForeground(dpy, gc, xfontcolor);
 
-					while (i < sizeof(string) - 1 &&
+					int len = 0;
+					while (len < 10 - 1 &&
 					       tmpkeysym != XK_Return &&
 					       tmpkeysym != XK_KP_Enter) {
 						XNextEvent(dpy, &e2);
@@ -304,14 +305,27 @@ run(void)
 
 						switch (e2.type) {
 						case KeyPress:
+							len = strlen(string);
 							XLookupString(&e2.xkey, input, 25, &tmpkeysym, NULL);
 							if (isdigit(input[0])) {
-								string[i] = input[0];
+								string[len] = input[0];
+								string[len + 1] = '\0';
 								XDrawString(dpy, buf, gc,
 									0, winheight - 5,
-									string, i + 1);
+									string, len + 1);
 								XdbeSwapBuffers(dpy, &swapinfo, 1);
 								i++;
+								break;
+							}
+							if (tmpkeysym == XK_BackSpace) {
+								string[len - 1] = '\0';
+								cleanwindow();
+								drawinstruments();
+								XDrawString(dpy, buf, gc,
+									0, winheight - 5,
+									string, len - 1);
+								XdbeSwapBuffers(dpy, &swapinfo, 1);
+								break;
 							}
 							break;
 
@@ -320,6 +334,7 @@ run(void)
 							winwidth = e2.xconfigure.width;
 							cleanwindow();
 							drawinstruments();
+							XdbeSwapBuffers(dpy, &swapinfo, 1);
 							break;
 						}
 					}
