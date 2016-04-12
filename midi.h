@@ -11,6 +11,7 @@ int channel;
 #define NOTE_ON 0x90
 #define NOTE_OFF 0x80
 #define PRG_CHANGE 0xC0
+#define PITCH_BEND 0xE0
 
 /* notes values on -1 octave */
 #define C 0
@@ -27,7 +28,7 @@ int channel;
 #define B 11
 
 /* value increased by one octave */
-#define OCTAVE_VALUE 12
+#define OCTAVE 12
 
 /* limits */
 #define NOTE_MIN 0

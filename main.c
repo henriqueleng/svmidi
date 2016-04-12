@@ -70,7 +70,7 @@ sendnote(int action, int note, int speed)
 {
 	int mult = octave;
 	mult++;
-	unsigned char message[] = {action | channel, note + (OCTAVE_VALUE * mult), speed};
+	unsigned char message[] = {action | channel, note + (OCTAVE * mult), speed};
 	midisend(message, sizeof(message));
 }
 
