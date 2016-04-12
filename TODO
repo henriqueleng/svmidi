@@ -1,4 +1,3 @@
-[ ] record to file? print midi data to stdout, allowing handling messages with pipes?
 [ ] bender (by mouse?)
 [*] better input on instrument selection
 [ ] once the software shows no bug, create a release
