@@ -56,7 +56,18 @@ XdbeBackBuffer buf;
 XdbeBackBufferAttributes  *bufattr;
 XdbeSwapInfo swapinfo;
 
-void quit(void);
+void
+quit(void)
+{
+	/* X11 close */
+	XdbeDeallocateBackBufferName(dpy, buf);
+	XFreeGC(dpy, gc);
+	XDestroyWindow(dpy, win);
+	XCloseDisplay(dpy);
+
+	/* midi close */
+	midiclose();
+}
 
 void
 changeinstrument(int number)
@@ -449,19 +460,6 @@ run(void)
 			break;
 		}
 	}
-}
-
-void
-quit(void)
-{
-	/* X11 close */
-	XdbeDeallocateBackBufferName(dpy, buf);
-	XFreeGC(dpy, gc);
-	XDestroyWindow(dpy, win);
-	XCloseDisplay(dpy);
-
-	/* midi close */
-	midiclose();
 }
 
 void
