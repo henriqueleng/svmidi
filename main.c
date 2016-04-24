@@ -312,7 +312,6 @@ run(void)
 						prompt , strlen(prompt));
 					XdbeSwapBuffers(dpy, &swapinfo, 1);
 
-					XSetForeground(dpy, gc, xfontcolor);
 					int len = 0;
 
 					while (len < 10 - 1 &&
@@ -344,11 +343,21 @@ run(void)
 							XdbeSwapBuffers(dpy, &swapinfo, 1);
 							break;
 
+						case Expose:
+							cleanwindow();
+							drawinstruments();
+							XDrawString(dpy, buf, gc, 0, winheight - 5,
+								prompt , strlen(prompt));
+							XdbeSwapBuffers(dpy, &swapinfo, 1);
+							break;
+
 						case ConfigureNotify:
 							winheight = e2.xconfigure.height;
 							winwidth = e2.xconfigure.width;
 							cleanwindow();
 							drawinstruments();
+							XDrawString(dpy, buf, gc, 0, winheight - 5,
+								prompt , strlen(prompt));
 							XdbeSwapBuffers(dpy, &swapinfo, 1);
 							break;
 						}
