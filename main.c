@@ -504,12 +504,12 @@ main(int argc, char *argv[])
 	argc -= optind;
 	argv += optind;
 
-	if (instrument > 127 || instrument < 0) {
+	if (instrument > INST_MAX || instrument < INST_MIN) {
 		fprintf(stderr, "intrument number out of range\n");
 		exit(EXIT_FAILURE);
 	}
 
-	if (octave > 9 || octave < -1) {
+	if (octave > OCTAVE_MAX || octave < OCTAVE_MIN) {
 		fprintf(stderr, "octave number out of range\n");
 		exit(EXIT_FAILURE);
 	}
