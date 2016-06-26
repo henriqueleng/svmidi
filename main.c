@@ -474,7 +474,7 @@ run(void)
 void
 usage(void)
 {
-	fprintf(stderr, "usage: svmidi [-i instrument] [-o octave]\n");
+	fprintf(stderr, "usage: svmidi [-i instrument] [-o octave] [-v]\n");
 	exit(EXIT_FAILURE);
 }
 
