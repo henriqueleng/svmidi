@@ -1,4 +1,4 @@
-static const char font[] = "-*-terminus-medium-r-normal-*-16-*-*-*-*-*-*-*";
+static const char font[] = "-misc-fixed-medium-*-*-*-14-*-*-*-*-*-*-*";
 static const char keycolor[] = "#ffffff";
 static const char keypressedcolor[] = "#6666ff";
 static const char sharpkeycolor[] = "#323232";
