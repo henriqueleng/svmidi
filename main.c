@@ -11,8 +11,7 @@
 
 #ifdef ALSA
 #include "alsa.h"
-#endif
-#ifdef SNDIO
+#elif SNDIO
 #include "sndio.h"
 #endif
 
