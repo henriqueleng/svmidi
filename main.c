@@ -437,25 +437,25 @@ run(void)
 			break;
 
 		case KeyRelease:
-				keysym = XLookupKeysym (&e.xkey, 0);
+			keysym = XLookupKeysym(&e.xkey, 0);
 
-				for (i = 0; i < nwhitekeys; i++) {
-					if (whitekeys[i].keysym == keysym &&
-					    whitekeys[i].status == PRESSED) {
-						sendnote(NOTE_OFF, whitekeys[i].note, 100);
-						whitekeys[i].status = RELEASED;
-						break;
-					}
+			for (i = 0; i < nwhitekeys; i++) {
+				if (whitekeys[i].keysym == keysym &&
+				    whitekeys[i].status == PRESSED) {
+					sendnote(NOTE_OFF, whitekeys[i].note, 100);
+					whitekeys[i].status = RELEASED;
+					break;
 				}
+			}
 
-				for (i = 0; i < nblackkeys; i++) {
-					if (blackkeys[i].keysym == keysym &&
-					    blackkeys[i].status == PRESSED) {
-						blackkeys[i].status = RELEASED;
-						sendnote(NOTE_OFF, blackkeys[i].note, 100);
-						break;
-					}
+			for (i = 0; i < nblackkeys; i++) {
+				if (blackkeys[i].keysym == keysym &&
+				    blackkeys[i].status == PRESSED) {
+					blackkeys[i].status = RELEASED;
+					sendnote(NOTE_OFF, blackkeys[i].note, 100);
+					break;
 				}
+			}
 			drawkeyboard();
 			break;
 
