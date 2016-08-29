@@ -248,20 +248,9 @@ cleanwindow(void) /* winheight, winwidth */
 }
 
 void
-drawinstruments(void)
+drawinstruments(uint textwidth, uint len)
 {
-	uint spacex = 0, spacey = 0, i;
-
-	uint biggest = 0, len = 0;
-	for (i = 0; i < LENGTH(instruments); i++) {
-		if ((strlen(instruments[i].name)) > len) {
-			len = strlen(instruments[i].name);
-			biggest = i;
-		}
-	}
-
-	len += 5;
-	int textwidth = XTextWidth(font_info, instruments[biggest].name, len) + 10;
+	int spacey = 0, spacex = 0, i;
 
 	for (i = 0; i < LENGTH(instruments); i++) {
 		char string[len];
@@ -284,6 +273,22 @@ run(void)
 	KeySym keysym;
 	XEvent e;
 
+	/*
+	 * calculate the biggest array in instument list and propper 
+	 * text width.
+	 */
+	uint i;
+	uint biggest = 0, instlen = 0;
+	for (i = 0; i < LENGTH(instruments); i++) {
+		if ((strlen(instruments[i].name)) > instlen) {
+			instlen = strlen(instruments[i].name);
+			biggest = i;
+		}
+	}
+
+	instlen += 5;
+	uint textwidth = XTextWidth(font_info, instruments[biggest].name, instlen) + 10;
+
 	while (1) {
 		uint i = 0;
 		XNextEvent(dpy, &e);
@@ -296,7 +301,7 @@ run(void)
 				if (keysym == XK_i && e.xkey.state & ControlMask) {
 					keysym = NoSymbol;
 					cleanwindow();
-					drawinstruments();
+					drawinstruments(textwidth, instlen);
 
 					/* vars */
 					XEvent e2;
@@ -332,7 +337,7 @@ run(void)
 							}
 
 							cleanwindow();
-							drawinstruments();
+							drawinstruments(textwidth, instlen);
 							XDrawString(dpy, buf, gc,
 								0, winheight - 5,
 								prompt , strlen(prompt));
@@ -344,7 +349,7 @@ run(void)
 
 						case Expose:
 							cleanwindow();
-							drawinstruments();
+							drawinstruments(textwidth, instlen);
 							XDrawString(dpy, buf, gc, 0, winheight - 5,
 								prompt , strlen(prompt));
 							XdbeSwapBuffers(dpy, &swapinfo, 1);
@@ -354,7 +359,7 @@ run(void)
 							winheight = e2.xconfigure.height;
 							winwidth = e2.xconfigure.width;
 							cleanwindow();
-							drawinstruments();
+							drawinstruments(textwidth, instlen);
 							XDrawString(dpy, buf, gc, 0, winheight - 5,
 								prompt , strlen(prompt));
 							XdbeSwapBuffers(dpy, &swapinfo, 1);
@@ -366,7 +371,7 @@ run(void)
 					if (instrument > 127 || instrument < 0) {
 						instrument = 0;
 						cleanwindow();
-						drawinstruments();
+						drawinstruments(textwidth, instlen);
 						char tmpstring[] = "ERROR: number out of range";
 						XSetForeground(dpy, gc, xfontcolor);
 						XDrawString(dpy, buf, gc,
