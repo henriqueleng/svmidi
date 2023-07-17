@@ -27,16 +27,28 @@ Read manpage and try the -h option.
 Example
 -------
 
+If you are on Linux:
+
 - Install fluidsynth
 - Get a free soundfont on the internet, like [Arachno](http://www.arachnosoft.com/main/download.php?id=soundfont), 
 a really good one with a lot of intruments.
-- Launch fluidsynth
+- Launch fluidsynth, with -a alsa if you are on linux:
 
-    fluidsynth media/sf2/soundfont.sf2
+    fluidsynth -a alsa media/sf2/soundfont.sf2
 
-- Launch svmidi and have fun
+- Launch svmidi
 
     svmidi -o 2
+
+- Verify the clients' numbers with
+
+    cat /proc/asound/seq/clients
+
+- Connect svmidi to fluidsynth
+
+    aconnect 129:0 128:0
+
+Have Fun!
 
 Contributing
 ------------
