@@ -331,7 +331,7 @@ run(void)
 						switch (e2.type) {
 						case KeyPress:
 							len = strlen(string);
-							XLookupString(&e2.xkey, input, 25, &tmpkeysym, NULL);
+							XLookupString(&e2.xkey, input, sizeof(input), &tmpkeysym, NULL);
 
 							/* at any time if press Escape, return to keyboard
 							 * without changing instrument */
