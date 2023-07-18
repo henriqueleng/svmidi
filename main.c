@@ -117,6 +117,9 @@ startwin(uint initial_width, uint initial_height)
 
 	colormap = DefaultColormap(dpy, screen);
 
+	/* set window name */
+	XStoreName(dpy, win, "svmidi");
+
 	/* colors */
 	xkeycolor = getcolor(keycolor);
 	xkeypressedcolor = getcolor(keypressedcolor);
