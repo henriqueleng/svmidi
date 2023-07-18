@@ -367,24 +367,28 @@ run(void)
 						}
 					}
 
-					instrument = atoi(string);
-					if (instrument > 127 || instrument < 0) {
-						instrument = 0;
-						cleanwindow();
-						drawinstruments(textwidth, instlen);
-						char tmpstring[] = "ERROR: number out of range";
-						XSetForeground(dpy, gc, xfontcolor);
-						XDrawString(dpy, buf, gc,
-							0, winheight - 5, 
-							tmpstring, strlen(tmpstring));
-						XdbeSwapBuffers(dpy, &swapinfo, 1);
-						/* wait for keypress */
-						e2.type = NoSymbol;
-						while (e2.type != KeyPress) {
-							XNextEvent(dpy, &e2);
+					if (strlen(string) != 0) {
+						instrument = atoi(string);
+						if (instrument > 127 || instrument < 0) {
+							/* print error and wait for key press */
+							instrument = 0;
+							cleanwindow();
+							drawinstruments(textwidth, instlen);
+							char tmpstring[] = "ERROR: number out of range";
+							XSetForeground(dpy, gc, xfontcolor);
+							XDrawString(dpy, buf, gc,
+								0, winheight - 5,
+								tmpstring, strlen(tmpstring));
+							XdbeSwapBuffers(dpy, &swapinfo, 1);
+							/* wait for keypress */
+							e2.type = NoSymbol;
+							while (e2.type != KeyPress) {
+								XNextEvent(dpy, &e2);
+							}
+						} else {
+							/* instrument changed and is a good number */
+							changeinstrument(instrument);
 						}
-					} else {
-						changeinstrument(instrument);
 					}
 					break;
 				}
