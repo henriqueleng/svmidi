@@ -309,25 +309,38 @@ run(void)
 
 					char string[10] = {0};
 
+					/* add prompt and calculate pixel size */
 					char prompt[] = "> ";
 					int promptwidth = XTextWidth(font_info, prompt, strlen(prompt));
 
+					/* draw prompt */
 					XDrawString(dpy, buf, gc, 0, winheight - 5,
 						prompt , strlen(prompt));
 					XdbeSwapBuffers(dpy, &swapinfo, 1);
 
 					int len = 0;
 
+					/* read input until enter or filling string */
 					while (len < 10 - 1 &&
 					       tmpkeysym != XK_Return &&
 					       tmpkeysym != XK_KP_Enter) {
 						XNextEvent(dpy, &e2);
 						char input[1] = {0};
 
+						/* start reading events */
 						switch (e2.type) {
 						case KeyPress:
 							len = strlen(string);
 							XLookupString(&e2.xkey, input, 25, &tmpkeysym, NULL);
+
+							/* at any time if press Escape, return to keyboard
+							 * without changing instrument */
+							if (tmpkeysym == XK_Escape) {
+								tmpkeysym = XK_Return;
+								string[0] = '\0';
+								break;
+							}
+
 							if (isdigit(input[0])) {
 								string[len] = input[0];
 								string[len + 1] = '\0';
