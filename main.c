@@ -365,6 +365,9 @@ run(void)
 							drawinstruments(textwidth, instlen);
 							XDrawString(dpy, buf, gc, 0, winheight - 5,
 								prompt , strlen(prompt));
+							XDrawString(dpy, buf, gc,
+								promptwidth, winheight - 5,
+								string, strlen(string));
 							XdbeSwapBuffers(dpy, &swapinfo, 1);
 							break;
 
@@ -375,6 +378,9 @@ run(void)
 							drawinstruments(textwidth, instlen);
 							XDrawString(dpy, buf, gc, 0, winheight - 5,
 								prompt , strlen(prompt));
+							XDrawString(dpy, buf, gc,
+								promptwidth, winheight - 5,
+								string, strlen(string));
 							XdbeSwapBuffers(dpy, &swapinfo, 1);
 							break;
 						}
