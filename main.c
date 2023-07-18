@@ -380,11 +380,11 @@ run(void)
 						}
 					}
 
+					int newinstrument;
 					if (strlen(string) != 0) {
-						instrument = atoi(string);
-						if (instrument > 127 || instrument < 0) {
+						newinstrument = atoi(string);
+						if (newinstrument > 127 || newinstrument < 0) {
 							/* print error and wait for key press */
-							instrument = 0;
 							cleanwindow();
 							drawinstruments(textwidth, instlen);
 							char tmpstring[] = "ERROR: number out of range";
@@ -400,7 +400,8 @@ run(void)
 							}
 						} else {
 							/* instrument changed and is a good number */
-							changeinstrument(instrument);
+							instrument = newinstrument;
+							changeinstrument(newinstrument);
 						}
 					}
 					break;
