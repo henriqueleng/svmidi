@@ -80,7 +80,8 @@ sendnote(int action, int note, int speed)
 {
 	int mult = octave;
 	mult++;
-	unsigned char message[] = {action | channel, note + (OCTAVE * mult), speed};
+	unsigned char message[] = {action | channel, note + (OCTAVE * mult),
+	    speed};
 	midisend(message, sizeof(message));
 }
 
@@ -112,8 +113,9 @@ startwin(uint initial_width, uint initial_height)
 	screen = DefaultScreen(dpy);
 
 	/* create window */
-	win = XCreateSimpleWindow(dpy, RootWindow(dpy, screen), 0, 0, initial_width, 
-		initial_height, 1, BlackPixel(dpy, screen), WhitePixel(dpy, screen));
+	win = XCreateSimpleWindow(dpy, RootWindow(dpy, screen), 0, 0,
+	    initial_width, initial_height, 1, BlackPixel(dpy, screen),
+	    WhitePixel(dpy, screen));
 
 	colormap = DefaultColormap(dpy, screen);
 
@@ -132,7 +134,8 @@ startwin(uint initial_width, uint initial_height)
 	/* try to load the given font. */
 	font_info = XLoadQueryFont(dpy, font);
 	if (!font_info) {
-		fprintf(stderr, "XLoadQueryFont: failed loading font: %s\n", font);
+		fprintf(stderr, "XLoadQueryFont: failed loading font: %s\n",
+		    font);
 		exit(EXIT_FAILURE);
 	}
 
@@ -172,8 +175,9 @@ void
 drawkeyboard(/* winheight */)
 {
 	char string[100];
-	snprintf(string, (size_t)100, "octave: %i   channel: %i    instrument: %i - %s", 
-		octave, channel, instrument, instruments[instrument].name);
+	snprintf(string, (size_t)100,
+	    "octave: %i   channel: %i    instrument: %i - %s",
+	    octave, channel, instrument, instruments[instrument].name);
 
 	/* is there really a need to fill a rectangle bellow text? */
 	XSetForeground(dpy, gc, xbgcolor);
@@ -193,14 +197,17 @@ drawkeyboard(/* winheight */)
 	for (i = 0; i < nwhitekeys; i++) {
 		if (whitekeys[totalkeys].status == PRESSED) {
 			XSetForeground(dpy, gc, xkeypressedcolor);
-			XFillRectangle(dpy, buf, gc, usedspace, fontheight, keywidth, keyheight);
+			XFillRectangle(dpy, buf, gc, usedspace, fontheight,
+			    keywidth, keyheight);
 		} else {
 			/* normal color */
 			XSetForeground(dpy, gc, xkeycolor);
-			XFillRectangle(dpy, buf, gc, usedspace, fontheight, keywidth, keyheight);
+			XFillRectangle(dpy, buf, gc, usedspace, fontheight,
+			    keywidth, keyheight);
 		}
 		XSetForeground(dpy, gc, xkeybordercolor);
-		XDrawRectangle(dpy, buf, gc, usedspace, fontheight, keywidth, keyheight);
+		XDrawRectangle(dpy, buf, gc, usedspace, fontheight, keywidth,
+		    keyheight);
 		usedspace += keywidth;
 		totalkeys++;
 	}
@@ -227,12 +234,14 @@ drawkeyboard(/* winheight */)
 		/* draw */
 		if (blackkeys[totalkeys].status == PRESSED) {
 			XSetForeground(dpy, gc, xsharpkeypressedcolor);
-			XFillRectangle(dpy, buf, gc, usedspace + ((keywidth * 2) / 3), 
-				fontheight, (keywidth * 2) / 3 , (keyheight * 2) / 3);
+			XFillRectangle(dpy, buf, gc,
+			    usedspace + ((keywidth * 2) / 3), fontheight,
+			    (keywidth * 2) / 3 , (keyheight * 2) / 3);
 		} else if (blackkeys[totalkeys].status == RELEASED) {
 			XSetForeground(dpy, gc, xsharpkeycolor);
-			XFillRectangle(dpy, buf, gc, usedspace + ((keywidth * 2) / 3), 
-				fontheight, (keywidth * 2) / 3 , (keyheight * 2 / 3)); 
+			XFillRectangle(dpy, buf, gc, usedspace +
+			    ((keywidth * 2) / 3), fontheight,
+			    (keywidth * 2) / 3 , (keyheight * 2 / 3));
 		}
 		usedspace += keywidth;
 		subskeys++;
@@ -257,7 +266,8 @@ drawinstruments(uint textwidth, uint len)
 
 	for (i = 0; i < LENGTH(instruments); i++) {
 		char string[len];
-		snprintf(string, len, "%i: %s", instruments[i].number, instruments[i].name);
+		snprintf(string, len, "%i: %s", instruments[i].number,
+		    instruments[i].name);
 
 		if (spacey >= winheight - (fontheight * 2)) {
 			spacey = fontheight;
@@ -266,7 +276,8 @@ drawinstruments(uint textwidth, uint len)
 			spacey += fontheight;
 		}
 		XSetForeground(dpy, gc, xfontcolor);
-		XDrawString(dpy, buf, gc, spacex, spacey, string, strlen(string));
+		XDrawString(dpy, buf, gc, spacex, spacey, string,
+		    strlen(string));
 	}
 }
 
@@ -290,7 +301,8 @@ run(void)
 	}
 
 	instlen += 5;
-	uint textwidth = XTextWidth(font_info, instruments[biggest].name, instlen) + 10;
+	uint textwidth = XTextWidth(font_info, instruments[biggest].name,
+	    instlen) + 10;
 
 	while (1) {
 		uint i = 0;
@@ -314,7 +326,8 @@ run(void)
 
 					/* add prompt and calculate pixel size */
 					char prompt[] = "> ";
-					int promptwidth = XTextWidth(font_info, prompt, strlen(prompt));
+					int promptwidth = XTextWidth(font_info,
+							  prompt, strlen(prompt));
 
 					/* draw prompt */
 					XDrawString(dpy, buf, gc, 0, winheight - 5,
