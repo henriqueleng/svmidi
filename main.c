@@ -172,6 +172,15 @@ startwin(uint initial_width, uint initial_height)
 }
 
 void
+cleanwindow(void) /* winheight, winwidth */
+{
+	/* just fill a rectangle with the size of the window */
+	XSetForeground(dpy, gc, xbgcolor);
+	XFillRectangle(dpy, buf, gc, 0, 0, winwidth, winheight);
+}
+
+
+void
 drawkeyboard(/* winheight */)
 {
 	char string[100];
@@ -179,10 +188,7 @@ drawkeyboard(/* winheight */)
 	    "octave: %i   channel: %i    instrument: %i - %s",
 	    octave, channel, instrument, instruments[instrument].name);
 
-	/* is there really a need to fill a rectangle bellow text? */
-	XSetForeground(dpy, gc, xbgcolor);
-	XFillRectangle(dpy, buf, gc, 0, 0, winwidth, winheight);
-
+	cleanwindow();
 	XSetForeground(dpy, gc, xfontcolor);
 	XDrawString(dpy, buf, gc, 0, fontheight - 2, string, strlen(string));
 
@@ -249,14 +255,6 @@ drawkeyboard(/* winheight */)
 	}
 
 	XdbeSwapBuffers(dpy, &swapinfo, 1);
-}
-
-void
-cleanwindow(void) /* winheight, winwidth */
-{
-	/* just fill a rectangle with the size of the window */
-	XSetForeground(dpy, gc, xbgcolor);
-	XFillRectangle(dpy, buf, gc, 0, 0, winwidth, winheight);	
 }
 
 void
@@ -355,6 +353,12 @@ run(void)
 								tmpkeysym = XK_Return;
 								string[0] = '\0';
 								break;
+							}
+
+							/* also quit if Ctrl + q on instrument list */
+							if (tmpkeysym == XK_q && e.xkey.state & ControlMask) {
+								quit();
+								exit(EXIT_SUCCESS);
 							}
 
 							if (isdigit(input[0])) {
