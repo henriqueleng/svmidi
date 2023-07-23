@@ -35,6 +35,7 @@ static Key whitekeys[] = {
 };
 
 static Key blackkeys[] = {
+	/* keysym             note             status */
 	{  XK_s,              C_SHARP,         RELEASED },
 	{  XK_d,              D_SHARP,         RELEASED },
 	{  XK_g,              F_SHARP,         RELEASED },
@@ -47,4 +48,5 @@ static Key blackkeys[] = {
 	{  XK_5,              A_SHARP + 12,    RELEASED },
 	{  XK_7,              C_SHARP + 24,    RELEASED },
 	{  XK_8,              D_SHARP + 24,    RELEASED },
+	{  XK_0,              F_SHARP + 24,    RELEASED },
 };
