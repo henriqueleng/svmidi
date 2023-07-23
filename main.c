@@ -45,7 +45,7 @@ static Display *dpy;
 static Window win;
 GC gc;
 Colormap colormap;
-ulong xkeycolor, xkeypressedcolor, xsharpkeycolor, 
+ulong xkeycolor, xkeypressedcolor, xsharpkeycolor,
 	xsharpkeypressedcolor, xkeybordercolor, xfontcolor, xbgcolor;
 XFontStruct* font_info;
 XWindowAttributes wa;
@@ -197,8 +197,8 @@ drawkeyboard(/* winheight */)
 
 	keyheight = winheight - 10;
 
-	/* 
-	 * White keys must be drawn first so they stay beneath black ones. 
+	/*
+	 * White keys must be drawn first so they stay beneath black ones.
 	 */
 	for (i = 0; i < nwhitekeys; i++) {
 		if (whitekeys[totalkeys].status == PRESSED) {
@@ -258,18 +258,51 @@ drawkeyboard(/* winheight */)
 }
 
 void
-drawinstruments(uint textwidth, uint len)
+drawinstruments(void)
 {
-	int spacey = 0, spacex = 0, i;
+	/*
+	 * calculate the biggest array in instrument list and propper
+	 * text width.
+	 */
+	uint biggest = 0, charcount = 0;
+	for (uint i = 0; i < LENGTH(instruments); i++) {
+		if ((strlen(instruments[i].name)) > charcount) {
+			charcount = strlen(instruments[i].name);
+			biggest = i;
+		}
+	}
 
-	for (i = 0; i < LENGTH(instruments); i++) {
-		char string[len];
-		snprintf(string, len, "%i: %s", instruments[i].number,
+	/* array lenght of the biggest instrument name */
+	/* strlen doesn't count \0, so the actual array length is one bigger */
+	uint arraylen = charcount + 1;
+
+	uint textwidth = XTextWidth(font_info, instruments[biggest].name,
+	    charcount);
+
+	/* calculate how many pixels one letter occupy */
+	uint letterwidth = XTextWidth(font_info, "E", 1);
+
+	/*
+	 * horizontal spacing for printing next
+	 * column, add 10 for extra separation
+	 */
+	uint columnwidth = 4 * letterwidth + textwidth + 10;
+
+	/*
+	 * add four elements to array to fit the two
+	 * numbers plus the spacing before instrument name
+	 */
+	arraylen += 4;
+
+	int spacey = 0, spacex = 0;
+	for (uint i = 0; i < LENGTH(instruments); i++) {
+		char string[arraylen];
+		snprintf(string, arraylen, "%i: %s", instruments[i].number,
 		    instruments[i].name);
 
 		if (spacey >= winheight - (fontheight * 2)) {
 			spacey = fontheight;
-			spacex += textwidth;
+			spacex += columnwidth;
 		} else {
 			spacey += fontheight;
 		}
@@ -285,23 +318,6 @@ run(void)
 	KeySym keysym;
 	XEvent e;
 
-	/*
-	 * calculate the biggest array in instument list and propper 
-	 * text width.
-	 */
-	uint i;
-	uint biggest = 0, instlen = 0;
-	for (i = 0; i < LENGTH(instruments); i++) {
-		if ((strlen(instruments[i].name)) > instlen) {
-			instlen = strlen(instruments[i].name);
-			biggest = i;
-		}
-	}
-
-	instlen += 5;
-	uint textwidth = XTextWidth(font_info, instruments[biggest].name,
-	    instlen) + 10;
-
 	while (1) {
 		uint i = 0;
 		XNextEvent(dpy, &e);
@@ -314,7 +330,7 @@ run(void)
 				if (keysym == XK_i && e.xkey.state & ControlMask) {
 					keysym = NoSymbol;
 					cleanwindow();
-					drawinstruments(textwidth, instlen);
+					drawinstruments();
 
 					/* vars */
 					XEvent e2;
@@ -370,7 +386,7 @@ run(void)
 							}
 
 							cleanwindow();
-							drawinstruments(textwidth, instlen);
+							drawinstruments();
 							XDrawString(dpy, buf, gc,
 								0, winheight - 5,
 								prompt , strlen(prompt));
@@ -382,7 +398,7 @@ run(void)
 
 						case Expose:
 							cleanwindow();
-							drawinstruments(textwidth, instlen);
+							drawinstruments();
 							XDrawString(dpy, buf, gc, 0, winheight - 5,
 								prompt , strlen(prompt));
 							XDrawString(dpy, buf, gc,
@@ -395,7 +411,7 @@ run(void)
 							winheight = e2.xconfigure.height;
 							winwidth = e2.xconfigure.width;
 							cleanwindow();
-							drawinstruments(textwidth, instlen);
+							drawinstruments();
 							XDrawString(dpy, buf, gc, 0, winheight - 5,
 								prompt , strlen(prompt));
 							XDrawString(dpy, buf, gc,
@@ -412,7 +428,7 @@ run(void)
 						if (newinstrument > 127 || newinstrument < 0) {
 							/* print error and wait for key press */
 							cleanwindow();
-							drawinstruments(textwidth, instlen);
+							drawinstruments();
 							char tmpstring[] = "ERROR: number out of range";
 							XSetForeground(dpy, gc, xfontcolor);
 							XDrawString(dpy, buf, gc,
@@ -526,7 +542,7 @@ usage(void)
 	exit(EXIT_FAILURE);
 }
 
-int 
+int
 main(int argc, char *argv[])
 {
 	int ch;
