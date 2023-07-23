@@ -225,7 +225,7 @@ drawkeyboard(/* winheight */)
 	uint alternate = 1;
 
 	/* draw black keys */
-	for (i = nblackkeys; i > 1; i--) {
+	for (i = nblackkeys; i >= 1; i--) {
 		/* alternate between 3 and 2 subsequent keys */
 		if (alternate == 1 && subskeys == 2) {
 			usedspace += keywidth;
