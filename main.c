@@ -279,7 +279,7 @@ drawinstruments(void)
 	uint textwidth = XTextWidth(font_info, instruments[biggest].name,
 	    charcount);
 
-	/* calculate how many pixels one letter occupy */
+	/* pixels occupied by one letter */
 	uint letterwidth = XTextWidth(font_info, "E", 1);
 
 	/*
