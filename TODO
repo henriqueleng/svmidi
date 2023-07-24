@@ -1,8 +1,0 @@
-[ ] bender (by mouse? scrollwheel?)
-[*] command line options like default octave
-[needs more feedback] alsa, via alsa.c alsa.h
-[*] better input on instrument selection
-[*] Escape or empty string on instrument list should
- maintain the same instruments instead of selecting instrument 0.
-
-KNOWN BUGS:
