@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>	/* usleep, getopt */
+#include <unistd.h>	/* getopt */
 #include <X11/keysym.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -265,23 +265,21 @@ void
 drawinstruments(void)
 {
 	/*
-	 * calculate the biggest array in instrument list and propper
-	 * text width.
+	 * find biggest array in instrument list
 	 */
-	uint biggest = 0, charcount = 0;
+	uint biggest = 0, length = 0;
 	for (uint i = 0; i < LENGTH(instruments); i++) {
-		if ((strlen(instruments[i].name)) > charcount) {
-			charcount = strlen(instruments[i].name);
+		if ((strlen(instruments[i].name)) > length) {
+			length = strlen(instruments[i].name);
 			biggest = i;
 		}
 	}
 
-	/* array lenght of the biggest instrument name */
 	/* strlen doesn't count \0, so the actual array length is one bigger */
-	uint arraylen = charcount + 1;
+	length++;
 
 	uint textwidth = XTextWidth(font_info, instruments[biggest].name,
-	    charcount);
+	    length);
 
 	/* pixels occupied by one letter */
 	uint letterwidth = XTextWidth(font_info, "E", 1);
@@ -296,12 +294,12 @@ drawinstruments(void)
 	 * add four elements to array to fit the two
 	 * numbers plus the spacing before instrument name
 	 */
-	arraylen += 4;
+	length += 4;
 
 	int spacey = 0, spacex = 0;
 	for (uint i = 0; i < LENGTH(instruments); i++) {
-		char string[arraylen];
-		snprintf(string, arraylen, "%i: %s", instruments[i].number,
+		char string[length];
+		snprintf(string, length, "%i: %s", instruments[i].number,
 		    instruments[i].name);
 
 		if (spacey >= winheight - (fontheight * 2)) {
