@@ -49,6 +49,7 @@ ulong xkeycolor, xkeypressedcolor, xsharpkeycolor,
 	xsharpkeypressedcolor, xkeybordercolor, xfontcolor, xbgcolor;
 XFontStruct* font_info;
 XWindowAttributes wa;
+Atom wm_delete_win;
 
 /* Xdbe */
 XdbeBackBuffer buf;
@@ -149,7 +150,10 @@ startwin(uint initial_width, uint initial_height)
 
 	/* Select kind of events we are interested in. */
 	XSelectInput(dpy, win, KeyPressMask | KeyReleaseMask |
-		StructureNotifyMask | ExposureMask);
+	    StructureNotifyMask | ExposureMask);
+
+	wm_delete_win = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
+	XSetWMProtocols(dpy, win, &wm_delete_win, 1);
 
 	/* Xdbe: back buffer */
 	buf = XdbeAllocateBackBufferName(dpy, win, XdbeUndefined);
@@ -419,6 +423,13 @@ run(void)
 								string, strlen(string));
 							XdbeSwapBuffers(dpy, &swapinfo, 1);
 							break;
+
+						case ClientMessage:
+							if (e2.xclient.data.l[0] == wm_delete_win) {
+								quit();
+								exit(EXIT_SUCCESS);
+							}
+							break;
 						}
 					}
 
@@ -527,6 +538,13 @@ run(void)
 
 		case Expose:
 			drawkeyboard();
+			break;
+
+		case ClientMessage:
+			if (e.xclient.data.l[0] == wm_delete_win) {
+				quit();
+				exit(EXIT_SUCCESS);
+			}
 			break;
 
 		default:
