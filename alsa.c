@@ -28,6 +28,7 @@ midisend(unsigned char message[], size_t count)
 {
 	snd_seq_event_t ev;
 
+	memset(&ev, 0, sizeof(snd_seq_event_t));
 	snd_midi_event_encode(mbuf, message, count, &ev);
 
 	snd_seq_ev_set_subs(&ev);
