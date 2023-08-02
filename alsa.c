@@ -43,4 +43,5 @@ midiclose(void)
 {
 	snd_midi_event_free(mbuf);
 	snd_seq_close(hdl);
+	snd_config_update_free_global();
 }
