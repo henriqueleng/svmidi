@@ -60,6 +60,7 @@ void
 quit(void)
 {
 	/* X11 close */
+	XFreeFont(dpy, font_info);
 	XdbeDeallocateBackBufferName(dpy, buf);
 	XFreeGC(dpy, gc);
 	XDestroyWindow(dpy, win);
