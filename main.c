@@ -206,16 +206,21 @@ drawkeyboard(/* winheight */)
 	 * White keys must be drawn first so they stay beneath black ones.
 	 */
 	for (i = 0; i < nwhitekeys; i++) {
-		if (whitekeys[totalkeys].status == PRESSED) {
-			XSetForeground(dpy, gc, xkeypressedcolor);
-			XFillRectangle(dpy, buf, gc, usedspace, fontheight,
-			    keywidth, keyheight);
-		} else {
-			/* normal color */
-			XSetForeground(dpy, gc, xkeycolor);
-			XFillRectangle(dpy, buf, gc, usedspace, fontheight,
-			    keywidth, keyheight);
+		switch (whitekeys[totalkeys].status) {
+			case PRESSED:
+				XSetForeground(dpy, gc, xkeypressedcolor);
+				break;
+			case RELEASED:
+				/* normal color */
+				XSetForeground(dpy, gc, xkeycolor);
+				break;
 		}
+
+		/* draw key */
+		XFillRectangle(dpy, buf, gc, usedspace,
+		    fontheight, keywidth, keyheight);
+
+		/* draw key boarder */
 		XSetForeground(dpy, gc, xkeybordercolor);
 		XDrawRectangle(dpy, buf, gc, usedspace, fontheight, keywidth,
 		    keyheight);
@@ -224,13 +229,12 @@ drawkeyboard(/* winheight */)
 	}
 
 	usedspace = 0;
-	totalkeys = 0;
 
 	uint subskeys = 0;
 	uint alternate = 1;
 
 	/* draw black keys */
-	for (i = nblackkeys; i >= 1; i--) {
+	for (i = 0; i < nblackkeys; i++) {
 		/* alternate between 3 and 2 subsequent keys */
 		if (alternate == 1 && subskeys == 2) {
 			usedspace += keywidth;
@@ -242,21 +246,24 @@ drawkeyboard(/* winheight */)
 			alternate = 1;
 		}
 
-		/* draw */
-		if (blackkeys[totalkeys].status == PRESSED) {
-			XSetForeground(dpy, gc, xsharpkeypressedcolor);
-			XFillRectangle(dpy, buf, gc,
-			    usedspace + ((keywidth * 2) / 3), fontheight,
-			    (keywidth * 2) / 3 , (keyheight * 2) / 3);
-		} else if (blackkeys[totalkeys].status == RELEASED) {
-			XSetForeground(dpy, gc, xsharpkeycolor);
-			XFillRectangle(dpy, buf, gc, usedspace +
-			    ((keywidth * 2) / 3), fontheight,
-			    (keywidth * 2) / 3 , (keyheight * 2 / 3));
+		/* set color */
+		switch (blackkeys[i].status) {
+			case PRESSED:
+				XSetForeground(dpy, gc, xsharpkeypressedcolor);
+				break;
+
+			case RELEASED:
+				XSetForeground(dpy, gc, xsharpkeycolor);
+				break;
 		}
+
+		/* draw */
+		XFillRectangle(dpy, buf, gc,
+		    usedspace + ((keywidth * 2) / 3), fontheight,
+		    (keywidth * 2) / 3 , (keyheight * 2) / 3);
+
 		usedspace += keywidth;
 		subskeys++;
-		totalkeys++;
 	}
 
 	XdbeSwapBuffers(dpy, &swapinfo, 1);
