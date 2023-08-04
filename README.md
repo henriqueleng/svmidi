@@ -3,8 +3,6 @@ svmidi - simple virtual midi keyboard
 This is very simple virtual midi keyboard. It handle key presses and send 
 midi messages to the synth. It also handle instrument and octave selection.
 
-*looking for a better name*
-
 Requirements
 ------------
 This program is based on Xlib, so you will need Xlib header files.
