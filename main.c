@@ -324,6 +324,134 @@ drawinstruments(void)
 }
 
 void
+instrumentselection(void)
+{
+	cleanwindow();
+	drawinstruments();
+
+	/* vars */
+	XEvent e2;
+	KeySym tmpkeysym = NoSymbol;
+
+	/* add prompt and calculate pixel size */
+	char prompt[] = "> ";
+	int promptwidth = XTextWidth(font_info,
+			  prompt, strlen(prompt));
+
+	/* draw prompt */
+	XDrawString(dpy, buf, gc, 0, winheight - 5,
+		prompt , strlen(prompt));
+	XdbeSwapBuffers(dpy, &swapinfo, 1);
+
+	int len = 0;
+	char string[10] = {0};
+
+	/* read input until enter or filling string */
+	while (len < 10 - 1 &&
+	       tmpkeysym != XK_Return &&
+	       tmpkeysym != XK_KP_Enter) {
+		XNextEvent(dpy, &e2);
+		char input[1] = {0};
+
+		/* start reading events */
+		switch (e2.type) {
+		case KeyPress:
+			len = strlen(string);
+			XLookupString(&e2.xkey, input, 
+			    sizeof(input), &tmpkeysym, NULL);
+
+			/* at any time if press Escape, return to keyboard
+			 * without changing instrument */
+			if (tmpkeysym == XK_Escape) {
+				tmpkeysym = XK_Return;
+				string[0] = '\0';
+				break;
+			}
+
+			/* also quit if Ctrl + q on instrument list */
+			if (tmpkeysym == XK_q && e2.xkey.state & ControlMask) {
+				quit();
+				exit(EXIT_SUCCESS);
+			}
+
+			if (isdigit(input[0])) {
+				string[len] = input[0];
+				string[len + 1] = '\0';
+			} else if (tmpkeysym == XK_BackSpace) {
+				string[len - 1] = '\0';
+			}
+
+			cleanwindow();
+			drawinstruments();
+			XDrawString(dpy, buf, gc,
+				0, winheight - 5,
+				prompt , strlen(prompt));
+			XDrawString(dpy, buf, gc,
+				promptwidth, winheight - 5,
+				string, strlen(string));
+			XdbeSwapBuffers(dpy, &swapinfo, 1);
+			break;
+
+		case Expose:
+			cleanwindow();
+			drawinstruments();
+			XDrawString(dpy, buf, gc, 0, winheight - 5,
+				prompt , strlen(prompt));
+			XDrawString(dpy, buf, gc,
+				promptwidth, winheight - 5,
+				string, strlen(string));
+			XdbeSwapBuffers(dpy, &swapinfo, 1);
+			break;
+
+		case ConfigureNotify:
+			winheight = e2.xconfigure.height;
+			winwidth = e2.xconfigure.width;
+			cleanwindow();
+			drawinstruments();
+			XDrawString(dpy, buf, gc, 0, winheight - 5,
+				prompt , strlen(prompt));
+			XDrawString(dpy, buf, gc,
+				promptwidth, winheight - 5,
+				string, strlen(string));
+			XdbeSwapBuffers(dpy, &swapinfo, 1);
+			break;
+
+		case ClientMessage:
+			if (e2.xclient.data.l[0] == wm_delete_win) {
+				quit();
+				exit(EXIT_SUCCESS);
+			}
+			break;
+		}
+	}
+
+	int newinstrument;
+	if (strlen(string) != 0) {
+		newinstrument = atoi(string);
+		if (newinstrument > 127 || newinstrument < 0) {
+			/* print error and wait for key press */
+			cleanwindow();
+			drawinstruments();
+			char tmpstring[] = "ERROR: number out of range";
+			XSetForeground(dpy, gc, xfontcolor);
+			XDrawString(dpy, buf, gc,
+				0, winheight - 5,
+				tmpstring, strlen(tmpstring));
+			XdbeSwapBuffers(dpy, &swapinfo, 1);
+			/* wait for keypress */
+			e2.type = NoSymbol;
+			while (e2.type != KeyPress) {
+				XNextEvent(dpy, &e2);
+			}
+		} else {
+			/* instrument changed and is a good number */
+			instrument = newinstrument;
+			changeinstrument(newinstrument);
+		}
+	}
+}
+
+void
 run(void)
 {
 	KeySym keysym;
@@ -336,136 +464,6 @@ run(void)
 
 			case KeyPress:
 				keysym = XLookupKeysym(&e.xkey, 0);
-
-				/* enter instrument select loop if Ctrl + i */
-				if (keysym == XK_i && e.xkey.state & ControlMask) {
-					keysym = NoSymbol;
-					cleanwindow();
-					drawinstruments();
-
-					/* vars */
-					XEvent e2;
-					KeySym tmpkeysym = NoSymbol;
-
-					char string[10] = {0};
-
-					/* add prompt and calculate pixel size */
-					char prompt[] = "> ";
-					int promptwidth = XTextWidth(font_info,
-							  prompt, strlen(prompt));
-
-					/* draw prompt */
-					XDrawString(dpy, buf, gc, 0, winheight - 5,
-						prompt , strlen(prompt));
-					XdbeSwapBuffers(dpy, &swapinfo, 1);
-
-					int len = 0;
-
-					/* read input until enter or filling string */
-					while (len < 10 - 1 &&
-					       tmpkeysym != XK_Return &&
-					       tmpkeysym != XK_KP_Enter) {
-						XNextEvent(dpy, &e2);
-						char input[1] = {0};
-
-						/* start reading events */
-						switch (e2.type) {
-						case KeyPress:
-							len = strlen(string);
-							XLookupString(&e2.xkey, input, sizeof(input), &tmpkeysym, NULL);
-
-							/* at any time if press Escape, return to keyboard
-							 * without changing instrument */
-							if (tmpkeysym == XK_Escape) {
-								tmpkeysym = XK_Return;
-								string[0] = '\0';
-								break;
-							}
-
-							/* also quit if Ctrl + q on instrument list */
-							if (tmpkeysym == XK_q && e.xkey.state & ControlMask) {
-								quit();
-								exit(EXIT_SUCCESS);
-							}
-
-							if (isdigit(input[0])) {
-								string[len] = input[0];
-								string[len + 1] = '\0';
-								i++;
-							} else if (tmpkeysym == XK_BackSpace) {
-								string[len - 1] = '\0';
-							}
-
-							cleanwindow();
-							drawinstruments();
-							XDrawString(dpy, buf, gc,
-								0, winheight - 5,
-								prompt , strlen(prompt));
-							XDrawString(dpy, buf, gc,
-								promptwidth, winheight - 5,
-								string, strlen(string));
-							XdbeSwapBuffers(dpy, &swapinfo, 1);
-							break;
-
-						case Expose:
-							cleanwindow();
-							drawinstruments();
-							XDrawString(dpy, buf, gc, 0, winheight - 5,
-								prompt , strlen(prompt));
-							XDrawString(dpy, buf, gc,
-								promptwidth, winheight - 5,
-								string, strlen(string));
-							XdbeSwapBuffers(dpy, &swapinfo, 1);
-							break;
-
-						case ConfigureNotify:
-							winheight = e2.xconfigure.height;
-							winwidth = e2.xconfigure.width;
-							cleanwindow();
-							drawinstruments();
-							XDrawString(dpy, buf, gc, 0, winheight - 5,
-								prompt , strlen(prompt));
-							XDrawString(dpy, buf, gc,
-								promptwidth, winheight - 5,
-								string, strlen(string));
-							XdbeSwapBuffers(dpy, &swapinfo, 1);
-							break;
-
-						case ClientMessage:
-							if (e2.xclient.data.l[0] == wm_delete_win) {
-								quit();
-								exit(EXIT_SUCCESS);
-							}
-							break;
-						}
-					}
-
-					int newinstrument;
-					if (strlen(string) != 0) {
-						newinstrument = atoi(string);
-						if (newinstrument > 127 || newinstrument < 0) {
-							/* print error and wait for key press */
-							cleanwindow();
-							drawinstruments();
-							char tmpstring[] = "ERROR: number out of range";
-							XSetForeground(dpy, gc, xfontcolor);
-							XDrawString(dpy, buf, gc,
-								0, winheight - 5,
-								tmpstring, strlen(tmpstring));
-							XdbeSwapBuffers(dpy, &swapinfo, 1);
-							/* wait for keypress */
-							e2.type = NoSymbol;
-							while (e2.type != KeyPress) {
-								XNextEvent(dpy, &e2);
-							}
-						} else {
-							/* instrument changed and is a good number */
-							instrument = newinstrument;
-							changeinstrument(newinstrument);
-						}
-					}
-					break;
-				}
 
 				if (keysym == XK_k && e.xkey.state & ControlMask && octave < 9) {
 					octave++;
@@ -484,6 +482,12 @@ run(void)
 
 				if (keysym == XK_h && e.xkey.state & ControlMask && channel > 0) {
 					channel--;
+					break;
+				}
+
+				/* enter instrument select loop if Ctrl + i */
+				if (keysym == XK_i && e.xkey.state & ControlMask) {
+					instrumentselection();
 					break;
 				}
 
