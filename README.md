@@ -50,6 +50,12 @@ a really good one with a lot of intruments.
 
 Have Fun!
 
+TODO
+----
+
+The main task now is to make the code as elegant and organized as possible,
+therefore also making the tool safe and well behaved.
+
 Contributing
 ------------
 Send patches to my email, or do it via github.
