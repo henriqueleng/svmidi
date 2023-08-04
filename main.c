@@ -186,8 +186,9 @@ cleanwindow(void) /* winheight, winwidth */
 
 
 void
-drawkeyboard(/* winheight */)
+drawkeyboard(void)
 {
+	/* draw top bar */
 	char string[100];
 	snprintf(string, (size_t)100,
 	    "octave: %i   channel: %i    instrument: %i - %s",
@@ -333,8 +334,8 @@ run(void)
 		XNextEvent(dpy, &e);
 		switch (e.type) {
 
-		case KeyPress:
-				keysym = XLookupKeysym (&e.xkey, 0);
+			case KeyPress:
+				keysym = XLookupKeysym(&e.xkey, 0);
 
 				/* enter instrument select loop if Ctrl + i */
 				if (keysym == XK_i && e.xkey.state & ControlMask) {
