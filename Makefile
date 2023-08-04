@@ -13,14 +13,14 @@ MANPREFIX = ${PREFIX}/man
 XLIBS = `pkg-config --libs x11` -lXext
 XFLAGS = `pkg-config --cflags x11`
 
-SOUNDLIBS = -lsndio
-SOUNDFLAGS = -DSNDIO
-SOUNDOBJ = sndio.o
+SOUNDLIBS = -lasound
+SOUNDFLAGS = -DALSA
+SOUNDOBJ = alsa.o
 
-#uncomment for ALSA
-#SOUNDLIBS = -lasound
-#SOUNDFLAGS = -DALSA
-#SOUNDOBJ = alsa.o
+# uncomment for sndio
+#SOUNDLIBS = -lsndio
+#SOUNDFLAGS = -DSNDIO
+#SOUNDOBJ = sndio.o
 
 OBJ += $(SOUNDOBJ)
 
