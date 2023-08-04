@@ -34,7 +34,7 @@ all: ${SOURCE} ${BIN}
 .c.o:
 	@${CC} -c ${CFLAGS} $<
 
-${OBJ}: midi.h sndio.h
+${OBJ}: midi.h sndio.h config.h
 
 ${BIN}: ${OBJ} ${HDR}
 	@${CC} ${CFLAGAS} -o ${BIN} ${OBJ} ${LIBS}
