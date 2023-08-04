@@ -465,42 +465,53 @@ run(void)
 			case KeyPress:
 				keysym = XLookupKeysym(&e.xkey, 0);
 
-				if (keysym == XK_k && e.xkey.state & ControlMask && octave < 9) {
+				if (keysym == XK_k &&
+				    e.xkey.state & ControlMask &&
+				    octave < 9) {
 					octave++;
 					break;
 				}
 
-				if (keysym == XK_j && e.xkey.state & ControlMask && octave > -1) {
+				if (keysym == XK_j &&
+				    e.xkey.state & ControlMask &&
+				    octave > -1) {
 					octave--;
 					break;
 				}
 
-				if (keysym == XK_l && e.xkey.state & ControlMask) {
+				if (keysym == XK_l &&
+				    e.xkey.state & ControlMask) {
 					channel++;
 					break;
 				}
 
-				if (keysym == XK_h && e.xkey.state & ControlMask && channel > 0) {
+				if (keysym == XK_h &&
+				    e.xkey.state & ControlMask &&
+				    channel > 0) {
 					channel--;
 					break;
 				}
 
 				/* enter instrument select loop if Ctrl + i */
-				if (keysym == XK_i && e.xkey.state & ControlMask) {
+				if (keysym == XK_i &&
+				    e.xkey.state & ControlMask) {
 					instrumentselection();
 					break;
 				}
 
-				if (keysym == XK_q && e.xkey.state & ControlMask) {
+				if (keysym == XK_q &&
+				    e.xkey.state & ControlMask) {
 					quit();
 					exit(EXIT_SUCCESS);
 				}
 
-				/* match key with a member of whitekeys[] or blackkeys[] */
+				 /* match key with a member 
+				  * of whitekeys[] or blackkeys[] */
 				for (i = 0; i < nwhitekeys; i++) {
 					if (whitekeys[i].keysym == keysym &&
 					    whitekeys[i].status == RELEASED) {
-						sendnote(NOTE_ON, whitekeys[i].note, 100);
+						sendnote(NOTE_ON,
+						    whitekeys[i].note, 100);
 						whitekeys[i].status = PRESSED;
 						break;
 					}
@@ -509,7 +520,8 @@ run(void)
 				for (i = 0; i < nblackkeys; i++) {
 					if (blackkeys[i].keysym == keysym &&
 					    blackkeys[i].status == RELEASED) {
-						sendnote(NOTE_ON, blackkeys[i].note, 100);
+						sendnote(NOTE_ON,
+						    blackkeys[i].note, 100);
 						blackkeys[i].status = PRESSED;
 						break;
 					}
@@ -524,7 +536,8 @@ run(void)
 			for (i = 0; i < nwhitekeys; i++) {
 				if (whitekeys[i].keysym == keysym &&
 				    whitekeys[i].status == PRESSED) {
-					sendnote(NOTE_OFF, whitekeys[i].note, 100);
+					sendnote(NOTE_OFF,
+					    whitekeys[i].note, 100);
 					whitekeys[i].status = RELEASED;
 					break;
 				}
@@ -534,7 +547,8 @@ run(void)
 				if (blackkeys[i].keysym == keysym &&
 				    blackkeys[i].status == PRESSED) {
 					blackkeys[i].status = RELEASED;
-					sendnote(NOTE_OFF, blackkeys[i].note, 100);
+					sendnote(NOTE_OFF,
+					    blackkeys[i].note, 100);
 					break;
 				}
 			}
