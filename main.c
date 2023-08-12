@@ -29,11 +29,12 @@ const uint keywidth = 50;
 uint keyheight;
 uint fontheight;
 uint nwhitekeys, nblackkeys;
+/* status of white and black keys */
+int wstatus = 0, bstatus = 0;
 
 typedef struct {
 	KeySym keysym;
 	int note;
-	int status;
 } Key;
 
 #include "midi.h"
@@ -207,7 +208,7 @@ drawkeyboard(void)
 	 * White keys must be drawn first so they stay beneath black ones.
 	 */
 	for (i = 0; i < nwhitekeys; i++) {
-		switch (whitekeys[totalkeys].status) {
+		switch ((wstatus & (1<<i)) >> i) {
 			case PRESSED:
 				XSetForeground(dpy, gc, xkeypressedcolor);
 				break;
@@ -277,7 +278,7 @@ drawkeyboard(void)
 		}
 
 		/* set color */
-		switch (blackkeys[i].status) {
+		switch ((bstatus & (1<<i)) >> i) {
 			case PRESSED:
 				XSetForeground(dpy, gc, xsharpkeypressedcolor);
 				break;
@@ -538,20 +539,20 @@ run(void)
 				  * of whitekeys[] or blackkeys[] */
 				for (i = 0; i < nwhitekeys; i++) {
 					if (whitekeys[i].keysym == keysym &&
-					    whitekeys[i].status == RELEASED) {
+					    !(wstatus & (1<<i))) {
 						sendnote(NOTE_ON,
 						    whitekeys[i].note, 100);
-						whitekeys[i].status = PRESSED;
+						wstatus |= (1<<i);
 						break;
 					}
 				}
 
 				for (i = 0; i < nblackkeys; i++) {
 					if (blackkeys[i].keysym == keysym &&
-					    blackkeys[i].status == RELEASED) {
+					    !(bstatus & (1<<i))) {
 						sendnote(NOTE_ON,
 						    blackkeys[i].note, 100);
-						blackkeys[i].status = PRESSED;
+						bstatus |= (1<<i);
 						break;
 					}
 				}
@@ -564,20 +565,20 @@ run(void)
 
 			for (i = 0; i < nwhitekeys; i++) {
 				if (whitekeys[i].keysym == keysym &&
-				    whitekeys[i].status == PRESSED) {
+				    (wstatus & (1<<i))) {
 					sendnote(NOTE_OFF,
 					    whitekeys[i].note, 100);
-					whitekeys[i].status = RELEASED;
+					wstatus ^= (1<<i);
 					break;
 				}
 			}
 
 			for (i = 0; i < nblackkeys; i++) {
 				if (blackkeys[i].keysym == keysym &&
-				    blackkeys[i].status == PRESSED) {
-					blackkeys[i].status = RELEASED;
+				    (bstatus & (1<<i))) {
 					sendnote(NOTE_OFF,
 					    blackkeys[i].note, 100);
+					bstatus ^= (1<<i);
 					break;
 				}
 			}
