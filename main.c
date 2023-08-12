@@ -231,8 +231,37 @@ drawkeyboard(void)
 
 	usedspace = 0;
 
-	uint subskeys = 0;
-	uint alternate = 1;
+	uint subskeys  = 0;
+	uint alternate = 0;
+
+	int note0 = whitekeys[0].note % 12;
+
+	if (note0 < 0)
+		note0 += 12;
+
+	switch (note0) {
+		case 0:
+		case 2:
+		case 4:
+			alternate = 1;
+			subskeys  = note0 / 2;
+			break;
+
+		case 5:
+		case 7:
+		case 9:
+		case 11:
+			alternate = 0;
+			subskeys = (note0 - 5) / 2;
+			break;
+
+		default:
+			fprintf(stderr,
+			    "first white note %d is not valid white key\n",
+			    whitekeys[0].note);
+			exit(EXIT_FAILURE);
+			quit();
+	}
 
 	/* draw black keys */
 	for (i = 0; i < nblackkeys; i++) {
