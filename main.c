@@ -662,7 +662,7 @@ main(int argc, char *argv[])
 	nwhitekeys = (int)LENGTH(whitekeys);
 	nblackkeys = (int)LENGTH(blackkeys);
 
-	startwin(1000, 400);
+	startwin(1000, 300);
 	run();
 	quit();
 	return 0;
