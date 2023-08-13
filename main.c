@@ -17,8 +17,6 @@
 
 /* macros */
 #define LENGTH(x)        (sizeof x / sizeof x[0])
-#define PRESSED  1
-#define RELEASED 0
 
 typedef unsigned int uint;
 typedef unsigned long ulong;
@@ -208,15 +206,10 @@ drawkeyboard(void)
 	 * White keys must be drawn first so they stay beneath black ones.
 	 */
 	for (i = 0; i < nwhitekeys; i++) {
-		switch ((wstatus & (1<<i)) >> i) {
-			case PRESSED:
-				XSetForeground(dpy, gc, xkeypressedcolor);
-				break;
-			case RELEASED:
-				/* normal color */
-				XSetForeground(dpy, gc, xkeycolor);
-				break;
-		}
+		if (wstatus & (1<<i))
+			XSetForeground(dpy, gc, xkeypressedcolor);
+		else
+			XSetForeground(dpy, gc, xkeycolor);
 
 		/* draw key */
 		XFillRectangle(dpy, buf, gc, usedspace,
@@ -278,15 +271,10 @@ drawkeyboard(void)
 		}
 
 		/* set color */
-		switch ((bstatus & (1<<i)) >> i) {
-			case PRESSED:
-				XSetForeground(dpy, gc, xsharpkeypressedcolor);
-				break;
-
-			case RELEASED:
-				XSetForeground(dpy, gc, xsharpkeycolor);
-				break;
-		}
+		if (bstatus & (1<<i))
+			XSetForeground(dpy, gc, xsharpkeypressedcolor);
+		else
+			XSetForeground(dpy, gc, xsharpkeycolor);
 
 		/* draw */
 		XFillRectangle(dpy, buf, gc,
