@@ -42,18 +42,18 @@ typedef struct {
 static int screen;
 static Display *dpy;
 static Window win;
-GC gc;
-Colormap colormap;
-ulong xkeycolor, xkeypressedcolor, xsharpkeycolor,
+static GC gc;
+static Colormap colormap;
+static ulong xkeycolor, xkeypressedcolor, xsharpkeycolor,
 	xsharpkeypressedcolor, xkeybordercolor, xfontcolor, xbgcolor;
-XFontStruct* font_info;
-XWindowAttributes wa;
-Atom wm_delete_win;
+static XFontStruct* font_info;
+static XWindowAttributes wa;
+static Atom wm_delete_win;
 
 /* Xdbe */
-XdbeBackBuffer buf;
-XdbeBackBufferAttributes  *bufattr;
-XdbeSwapInfo swapinfo;
+static XdbeBackBuffer buf;
+static XdbeBackBufferAttributes  *bufattr;
+static XdbeSwapInfo swapinfo;
 
 void
 quit(void)
