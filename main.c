@@ -315,7 +315,7 @@ drawinstruments(void)
 	 * horizontal spacing for printing next
 	 * column, add 10 for extra separation
 	 */
-	uint columnwidth = 4 * letterwidth + textwidth + 10;
+	uint columnwidth = 4 * letterwidth + textwidth + 4;
 
 	/*
 	 * add four elements to array to fit the two
