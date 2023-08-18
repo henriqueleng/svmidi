@@ -629,7 +629,7 @@ main(int argc, char *argv[])
 	argc -= optind;
 	argv += optind;
 
-	if (instrument > INST_MAX || instrument < INST_MIN) {
+	if (instrument > INSTRUMENT_MAX || instrument < INSTRUMENT_MIN) {
 		fprintf(stderr, "intrument number out of range\n");
 		exit(EXIT_FAILURE);
 	}

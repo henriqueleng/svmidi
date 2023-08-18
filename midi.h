@@ -31,8 +31,8 @@ int channel;
 #define OCTAVE 12
 
 /* limits */
-#define INST_MIN 0
-#define INST_MAX 127
+#define INSTRUMENT_MIN 0
+#define INSTRUMENT_MAX 127
 #define OCTAVE_MIN -1
 #define OCTAVE_MAX 9
 
