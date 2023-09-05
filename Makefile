@@ -25,7 +25,7 @@ SOUNDOBJ = alsa.o
 OBJ += $(SOUNDOBJ)
 
 LIBS = ${XLIBS} ${SOUNDLIBS}
-CFLAGS = -g -std=c99 -pedantic -Wall -O0 ${XFLAGS} ${SOUNDFLAGS} -D_POSIX_C_SOURCE=200112L -DVERSION=\"${VERSION}\"
+CFLAGS = -g -std=c99 -pedantic -Wall -Werror -O0 ${XFLAGS} ${SOUNDFLAGS} -D_POSIX_C_SOURCE=200112L -DVERSION=\"${VERSION}\"
 
 BIN = svmidi
 
@@ -37,7 +37,7 @@ all: ${SOURCE} ${BIN}
 ${OBJ}: midi.h sndio.h config.h
 
 ${BIN}: ${OBJ} ${HDR}
-	@${CC} ${CFLAGAS} -o ${BIN} ${OBJ} ${LIBS}
+	@${CC} ${CFLAGS} -o ${BIN} ${OBJ} ${LIBS}
 
 install: all
 	@mkdir -p ${DESTDIR}${PREFIX}/bin
