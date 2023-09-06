@@ -1,5 +1,5 @@
 # See LICENSE file for copyright and license details.
-VERSION = 0.3
+VERSION = 0.4
 
 # SOURCE
 SOURCE = main.c sndio.c alsa.c
