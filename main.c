@@ -499,7 +499,9 @@ run(void)
 
 				if (keysym == XK_l &&
 				    e.xkey.state & ControlMask) {
-					channel++;
+					if (channel < 15) {
+						channel++;
+					}
 					break;
 				}
 
