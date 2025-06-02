@@ -365,6 +365,8 @@ instrumentselection(void)
 	int len = 0;
 	char string[10] = {0};
 
+	int update = 0;
+
 	/* read input until enter or filling string */
 	while (len < 10 - 1 &&
 	       tmpkeysym != XK_Return &&
@@ -400,39 +402,17 @@ instrumentselection(void)
 				string[len - 1] = '\0';
 			}
 
-			cleanwindow();
-			drawinstruments();
-			XDrawString(dpy, buf, gc,
-				0, winheight - 5,
-				prompt , strlen(prompt));
-			XDrawString(dpy, buf, gc,
-				promptwidth, winheight - 5,
-				string, strlen(string));
-			XdbeSwapBuffers(dpy, &swapinfo, 1);
+			update = 1;
 			break;
 
 		case Expose:
-			cleanwindow();
-			drawinstruments();
-			XDrawString(dpy, buf, gc, 0, winheight - 5,
-				prompt , strlen(prompt));
-			XDrawString(dpy, buf, gc,
-				promptwidth, winheight - 5,
-				string, strlen(string));
-			XdbeSwapBuffers(dpy, &swapinfo, 1);
+			update = 1;
 			break;
 
 		case ConfigureNotify:
 			winheight = e2.xconfigure.height;
 			winwidth = e2.xconfigure.width;
-			cleanwindow();
-			drawinstruments();
-			XDrawString(dpy, buf, gc, 0, winheight - 5,
-				prompt , strlen(prompt));
-			XDrawString(dpy, buf, gc,
-				promptwidth, winheight - 5,
-				string, strlen(string));
-			XdbeSwapBuffers(dpy, &swapinfo, 1);
+			update = 1;
 			break;
 
 		case ClientMessage:
@@ -441,6 +421,18 @@ instrumentselection(void)
 				exit(EXIT_SUCCESS);
 			}
 			break;
+		}
+
+		if (update) {
+			cleanwindow();
+			drawinstruments();
+			XDrawString(dpy, buf, gc, 0, winheight - 5,
+				prompt , strlen(prompt));
+			XDrawString(dpy, buf, gc,
+				promptwidth, winheight - 5,
+				string, strlen(string));
+			XdbeSwapBuffers(dpy, &swapinfo, 1);
+			update = 0;
 		}
 	}
 
