@@ -150,7 +150,8 @@ startwin(uint initial_width, uint initial_height)
 
 	/* Select kind of events we are interested in. */
 	XSelectInput(dpy, win, KeyPressMask | KeyReleaseMask |
-	    StructureNotifyMask | ExposureMask);
+	    ButtonPressMask | ButtonReleaseMask | StructureNotifyMask |
+	    ExposureMask);
 
 	wm_delete_win = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
 	XSetWMProtocols(dpy, win, &wm_delete_win, 1);
@@ -483,46 +484,40 @@ run(void)
 			case KeyPress:
 				keysym = XLookupKeysym(&e.xkey, 0);
 
-				if (keysym == XK_k &&
-				    e.xkey.state & ControlMask &&
-				    octave < 9) {
-					octave++;
-					break;
-				}
+				/* keys pressed with Ctrl */
+				if (e.xkey.state & ControlMask) {
+					switch (keysym) {
+						case XK_k:
+							if (octave < 9)
+								octave++;
+							break;
 
-				if (keysym == XK_j &&
-				    e.xkey.state & ControlMask &&
-				    octave > -1) {
-					octave--;
-					break;
-				}
+						case XK_j:
+							if (octave > -1)
+								octave--;
+							break;
 
-				if (keysym == XK_l &&
-				    e.xkey.state & ControlMask) {
-					if (channel < 15) {
-						channel++;
+						case XK_l:
+							if (channel < 15)
+								channel++;
+							break;
+
+						case XK_h:
+							if (channel > 0)
+								channel--;
+							break;
+
+						/* enter instrument selection */
+						case XK_i:
+							instrumentselection();
+							keysym = 0;
+							break;
+
+						case XK_q:
+							quit();
+							exit(EXIT_SUCCESS);
+							break;
 					}
-					break;
-				}
-
-				if (keysym == XK_h &&
-				    e.xkey.state & ControlMask &&
-				    channel > 0) {
-					channel--;
-					break;
-				}
-
-				/* enter instrument select loop if Ctrl + i */
-				if (keysym == XK_i &&
-				    e.xkey.state & ControlMask) {
-					instrumentselection();
-					break;
-				}
-
-				if (keysym == XK_q &&
-				    e.xkey.state & ControlMask) {
-					quit();
-					exit(EXIT_SUCCESS);
 				}
 
 				 /* match key with a member 
@@ -548,7 +543,7 @@ run(void)
 				}
 
 				drawkeyboard();
-			break;
+				break;
 
 		case KeyRelease:
 			keysym = XLookupKeysym(&e.xkey, 0);
