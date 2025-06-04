@@ -381,7 +381,7 @@ instrumentselection(void)
 			XLookupString(&e2.xkey, input, 
 			    sizeof(input), &tmpkeysym, NULL);
 
-			/* at any time if press Escape, return to keyboard
+			/* if Escape, return to keyboard
 			 * without changing instrument */
 			if (tmpkeysym == XK_Escape) {
 				tmpkeysym = XK_Return;
@@ -389,7 +389,7 @@ instrumentselection(void)
 				break;
 			}
 
-			/* also quit if Ctrl + q on instrument list */
+			/* quit if Ctrl + q on instrument list */
 			if (tmpkeysym == XK_q && e2.xkey.state & ControlMask) {
 				quit();
 				exit(EXIT_SUCCESS);
@@ -471,71 +471,71 @@ run(void)
 	while (1) {
 		uint i = 0;
 		XNextEvent(dpy, &e);
+
 		switch (e.type) {
+		case KeyPress:
+			keysym = XLookupKeysym(&e.xkey, 0);
 
-			case KeyPress:
-				keysym = XLookupKeysym(&e.xkey, 0);
+			/* keys pressed with Ctrl */
+			if (e.xkey.state & ControlMask) {
+				switch (keysym) {
+				case XK_k:
+					if (octave < 9)
+						octave++;
+					break;
 
-				/* keys pressed with Ctrl */
-				if (e.xkey.state & ControlMask) {
-					switch (keysym) {
-						case XK_k:
-							if (octave < 9)
-								octave++;
-							break;
+				case XK_j:
+					if (octave > -1)
+						octave--;
+					break;
 
-						case XK_j:
-							if (octave > -1)
-								octave--;
-							break;
+				case XK_l:
+					if (channel < 15)
+						channel++;
+					break;
 
-						case XK_l:
-							if (channel < 15)
-								channel++;
-							break;
+				case XK_h:
+					if (channel > 0)
+						channel--;
+					break;
 
-						case XK_h:
-							if (channel > 0)
-								channel--;
-							break;
+				/* enter instrument selection */
+				case XK_i:
+					instrumentselection();
+					keysym = 0;
+					break;
 
-						/* enter instrument selection */
-						case XK_i:
-							instrumentselection();
-							keysym = 0;
-							break;
-
-						case XK_q:
-							quit();
-							exit(EXIT_SUCCESS);
-							break;
-					}
+				case XK_q:
+					quit();
+					exit(EXIT_SUCCESS);
+					break;
 				}
+			}
 
 				 /* match key with a member 
 				  * of whitekeys[] or blackkeys[] */
-				for (i = 0; i < nwhitekeys; i++) {
-					if (whitekeys[i].keysym == keysym &&
-					    !(wstatus & (1<<i))) {
-						sendnote(NOTE_ON,
-						    whitekeys[i].note, 100);
-						wstatus |= (1<<i);
-						break;
-					}
+			for (i = 0; i < nwhitekeys; i++) {
+				if (whitekeys[i].keysym == keysym &&
+				    !(wstatus & (1<<i))) {
+					sendnote(NOTE_ON,
+					    whitekeys[i].note, 100);
+					wstatus |= (1<<i);
+					break;
 				}
+			}
 
-				for (i = 0; i < nblackkeys; i++) {
-					if (blackkeys[i].keysym == keysym &&
-					    !(bstatus & (1<<i))) {
-						sendnote(NOTE_ON,
-						    blackkeys[i].note, 100);
-						bstatus |= (1<<i);
-						break;
-					}
+			for (i = 0; i < nblackkeys; i++) {
+				if (blackkeys[i].keysym == keysym &&
+				    !(bstatus & (1<<i))) {
+					sendnote(NOTE_ON,
+					    blackkeys[i].note, 100);
+					bstatus |= (1<<i);
+					break;
 				}
+			}
 
-				drawkeyboard();
-				break;
+			drawkeyboard();
+			break;
 
 		case KeyRelease:
 			keysym = XLookupKeysym(&e.xkey, 0);
