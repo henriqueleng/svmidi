@@ -290,55 +290,52 @@ drawkeyboard(void)
 }
 
 void
+drawnumbline(const char *string, uint n, uint x, uint y) {
+	/* 1 for \0 */
+	uint len = strlen(string) + 1;
+
+	/* 5 to accomodate '000: ' */
+	char tmpstr[len + 5];
+	sprintf(tmpstr, "%d: %s", n, string);
+
+	/* draw */
+	XSetForeground(dpy, gc, xfontcolor);
+	XDrawString(dpy, buf, gc, x, y, tmpstr,
+	    strlen(tmpstr));
+}
+
+void
 drawinstruments(void)
 {
-	/*
-	 * find biggest array in instrument list
-	 */
-	uint biggest = 0, length = 0;
-	for (uint i = 0; i < LENGTH(instruments); i++) {
-		if ((strlen(instruments[i].name)) > length) {
-			length = strlen(instruments[i].name);
-			biggest = i;
-		}
-	}
-
-	/* strlen doesn't count \0, so the actual array length is one bigger */
-	length++;
-
-	uint textwidth = XTextWidth(font_info, instruments[biggest].name,
-	    length);
-
 	/* pixels occupied by one letter */
 	uint letterwidth = XTextWidth(font_info, "E", 1);
 
-	/*
-	 * horizontal spacing for printing next
-	 * column, add 10 for extra separation
-	 */
-	uint columnwidth = 4 * letterwidth + textwidth + 4;
+	uint npercolumn = (winheight - 2*fontheight) / (fontheight);
+	uint n = 1;
 
-	/*
-	 * add four elements to array to fit the two
-	 * numbers plus the spacing before instrument name
-	 */
-	length += 4;
-
-	int spacey = 0, spacex = 0;
+	uint len = 0, biggest = 0;
+	uint posx = 0, posy = fontheight;
 	for (uint i = 0; i < LENGTH(instruments); i++) {
-		char string[length];
-		snprintf(string, length, "%i: %s", instruments[i].number,
-		    instruments[i].name);
-
-		if (spacey >= winheight - (fontheight * 2)) {
-			spacey = fontheight;
-			spacex += columnwidth;
-		} else {
-			spacey += fontheight;
+		uint tmplen = strlen(instruments[i].name);
+		if (tmplen > len) {
+			len = tmplen;
+			biggest = i;
 		}
-		XSetForeground(dpy, gc, xfontcolor);
-		XDrawString(dpy, buf, gc, spacex, spacey, string,
-		    strlen(string));
+
+		/* draw */
+		drawnumbline(instruments[i].name, i, posx, posy);
+
+		if (n == npercolumn + 1) {
+			uint textwidth = XTextWidth(font_info, instruments[biggest].name,
+			    len);
+			posx += textwidth + 5 * letterwidth;
+			posy = 0;
+			len = 0;
+			biggest = 0;
+			n=0;
+		}
+		n++;
+		posy += fontheight;
 	}
 }
 
